@@ -1,0 +1,8 @@
+{
+    "cid": "1592133806642176",
+    "alias": "polygon-example",
+    "pid": "DE_1592133806642177",
+    "platform": "https://dev.api.beamable.com",
+    "socket": "https://dev.api.beamable.com",
+    "containerPrefix": ""
+}
