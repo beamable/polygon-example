@@ -8,7 +8,7 @@ namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler.Models
 {
     public class SolidityCompilerOutput
     {
-        [JsonProperty("errors")] public Collection<OutputError>? Errors { get; set; }
+        [JsonProperty("errors")] public Collection<OutputError> Errors { get; set; }
         [JsonProperty("sources")] public Dictionary<string, OutputSource> Sources { get; set; } = null!;
         [JsonProperty("contracts")] public OutputContracts Contracts { get; set; } = null!;
 
@@ -34,6 +34,31 @@ namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler.Models
             public class OutputContract
             {
                 [JsonExtensionData] public Dictionary<string, JToken> Data { get; set; } = null!;
+
+                public string GetAbi()
+                {
+                    var token = Data.GetValueOrDefault("abi");
+                    if (token is null) return "";
+                    return JsonConvert.SerializeObject(token);
+                }
+
+                public string GetBytecode()
+                {
+                    var token = Data.GetValueOrDefault("evm");
+                    if (token is null) return "";
+                    var evm = token.ToObject<EvmOutput>()!;
+                    return evm.Bytecode.Object;
+                }
+
+                public class EvmOutput
+                {
+                    [JsonProperty("bytecode")] public EvmBytecode Bytecode { get; set; } = null!;
+
+                    public class EvmBytecode
+                    {
+                        [JsonProperty("object")] public string Object { get; set; } = null!;
+                    }
+                }
             }
         }
 
