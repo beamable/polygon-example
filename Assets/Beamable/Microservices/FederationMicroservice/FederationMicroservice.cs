@@ -27,18 +27,19 @@ namespace Beamable.Microservices.FederationMicroservice
 			var web3 = new Web3(account, RPCEndpoint);
 			if (output.HasErrors)
 			{
-				BeamableLogger.LogError("We have errors");
+				BeamableLogger.LogError("We have errors - {@output}", output);
 				throw new Exception("We have errors");
 			}
 			
 			var contractOutput = output.Contracts.Contract.First().Value;
 
-			var abi =contractOutput.GetAbi();
+			var abi = contractOutput.GetAbi();
 			var contractByteCode = contractOutput.GetBytecode();
 
 			BeamableLogger.Log("Estimating gas");
 			var gas = await web3.Eth.DeployContract.EstimateGasAsync(abi, contractByteCode, account.Address);
 			BeamableLogger.Log("Gas is {g}", gas);
+			
 			BeamableLogger.Log("Sending contract");
 			var result = await web3.Eth.DeployContract.SendRequestAndWaitForReceiptAsync(abi, contractByteCode, account.Address, gas, CancellationToken.None);
 			var responseString = JsonConvert.SerializeObject(result);
