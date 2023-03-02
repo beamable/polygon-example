@@ -18,18 +18,16 @@ namespace Beamable.Microservices.FederationMicroservice
     [Microservice("FederationMicroservice")]
     public class FederationMicroservice : Microservice, IFederatedLogin<PolygonCloudIdentity>
     {
-        public static RealmConfig RealmConfig;
-        
         [InitializeServices]
         public static async Task Initialize(IServiceInitializer initializer)
         {
             var realmConfigService = initializer.GetService<IMicroserviceRealmConfigService>();
-            RealmConfig = await realmConfigService.GetRealmConfigSettings();
+            Configuration.RealmConfig = await realmConfigService.GetRealmConfigSettings();
         }
         
         public async Promise<FederatedAuthenticationResponse> Authenticate(string token, string challenge, string solution)
         {
-            if (RealmConfig.GetSetting("federation_polygon", "allowManagedWallets", "true") == "true")
+            if (Configuration.AllowManagedAccounts)
             {
                 if (string.IsNullOrEmpty(token) && Context.UserId != 0L)
                 {
