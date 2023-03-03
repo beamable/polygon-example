@@ -9,11 +9,11 @@ namespace Beamable.Microservices.FederationMicroservice
     {
         private const string ConfigurationNamespace = "federation_polygon";
 
-        public static RealmConfig RealmConfig;
+        public static RealmConfig RealmConfig { get; internal set; }
         
         public static readonly string RealmSecret = Environment.GetEnvironmentVariable("SECRET");
         
-        public static string RPCEndpoint => GetValue(nameof(RPCEndpoint), "https://sepolia.infura.io/v3/0381878048f64d6c9ab3d0fc17b45a69"); 
+        public static string RPCEndpoint => GetValue(nameof(RPCEndpoint), "https://rpc-mumbai.maticvigil.com/v1/5e502a11ee9bdc54143ac84efdb16b0c47bbfd8c"); 
         public static bool AllowManagedAccounts => GetValue(nameof(AllowManagedAccounts), false); 
         public static int AuthenticationChallengeTtlSec => GetValue(nameof(AuthenticationChallengeTtlSec), 600); 
         
