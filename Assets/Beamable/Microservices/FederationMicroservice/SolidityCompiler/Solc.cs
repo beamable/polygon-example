@@ -36,7 +36,7 @@ namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler
                 string outputText = await reader.ReadToEndAsync();
 
                 var output = JsonConvert.DeserializeObject<SolidityCompilerOutput>(outputText);
-                process.WaitForExit();
+                process.WaitForExit(5000);
 
                 return output!;
             }
