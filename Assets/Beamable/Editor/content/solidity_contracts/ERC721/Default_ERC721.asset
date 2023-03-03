@@ -10,25 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d467cd38e71108244a4fe40f1eee1c29, type: 3}
-  m_Name: BeamSword
+  m_Name: Default_ERC721
   m_EditorClassIdentifier: 
   _tags: []
-  icon:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  clientPermission:
-    writeSelf: 0
-  federation:
-    HasValue: 0
-    Value:
-      Service: 
-      Namespace: 
-  smartContractTemplate: "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.9;\r\n\r\nimport
+  contractTemplate: "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.9;\r\n\r\nimport
     \"@openzeppelin/contracts/token/ERC721/ERC721.sol\";\r\nimport \"@openzeppelin/contracts/access/Ownable.sol\";\r\n\r\ncontract
     DefaultContract is ERC721, Ownable {\r\n    constructor() ERC721(\"{{ContentId}}\",
     \"ITS\") {}\r\n\r\n    function _baseURI() internal pure override returns (string
-    memory) {\r\n        return \"{{ExternalUri}}\";\r\n    }\r\n\r\n    function
-    safeMint(address to, uint256 tokenId) public onlyOwner {\r\n        _safeMint(to,
-    tokenId);\r\n    }\r\n}"
+    memory) {\r\n        return \"{{Properties.ExternalUri}}\";\r\n    }\r\n\r\n   
+    function safeMint(address to, uint256 tokenId) public onlyOwner {\r\n       
+    _safeMint(to, tokenId);\r\n    }\r\n}"

@@ -1,19 +1,18 @@
-using Beamable;
+using System;
 using Beamable.Common.Content;
-using Beamable.Common.Content.Validation;
-using Beamable.Common.Inventory;
-using UnityEngine;
 
-[System.Serializable]
-public class ERC721Ref : ItemRef<ERC721> { }
+[Serializable]
+public class ERC721ContractContentRef : SolidityContractContentRef<ERC721ContractContent>
+{
+}
 
 [ContentType("ERC721")]
-[System.Serializable]
-public class ERC721 : ItemContent
+[Serializable]
+public class ERC721ContractContent : SolidityContractContent
 {
-    [TextArea(10, 100)]
-    [CannotBeBlank]
-    public string smartContractTemplate = @"
+    public ERC721ContractContent()
+    {
+        contractTemplate = @"
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
@@ -32,5 +31,5 @@ contract DefaultContract is ERC721, Ownable {
     }
 }
 ".Trim();
+    }
 }
-

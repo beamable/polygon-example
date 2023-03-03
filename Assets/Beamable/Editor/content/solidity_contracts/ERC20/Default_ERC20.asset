@@ -10,23 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 158f99cfb24e83248b0fcac428cd64a4, type: 3}
-  m_Name: BeamCoin
+  m_Name: Default_ERC20
   m_EditorClassIdentifier: 
   _tags: []
-  icon:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  clientPermission:
-    writeSelf: 0
-  startingAmount: 0
-  federation:
-    HasValue: 0
-    Value:
-      Service: 
-      Namespace: 
-  smartContractTemplate: "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.9;\r\n\r\nimport
+  contractTemplate: "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.9;\r\n\r\nimport
     \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";\r\nimport \"@openzeppelin/contracts/access/Ownable.sol\";\r\n\r\ncontract
     DefaultContract is ERC20, Ownable {\r\n    constructor() ERC20(\"{{ContentId}}\",
     \"BMC\") {}\r\n\r\n    function mint(address to, uint256 amount) public onlyOwner
