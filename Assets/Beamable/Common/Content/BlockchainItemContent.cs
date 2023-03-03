@@ -6,7 +6,7 @@ using Beamable.Common.Inventory;
 [Serializable]
 public class BlockchainItemContentRef : ItemRef<BlockchainItemContent> { }
 
-[ContentType("blockchain_items")]
+[ContentType("blockchain")]
 [Serializable]
 public class BlockchainItemContent : ItemContent
 {
