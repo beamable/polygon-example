@@ -21,9 +21,9 @@ MonoBehaviour:
   clientPermission:
     writeSelf: 0
   federation:
-    HasValue: 0
+    HasValue: 1
     Value:
-      Service: 
-      Namespace: 
+      Service: FederationMicroservice
+      Namespace: polygon
   contract:
-    Id: 
+    Id: solidity_contracts.ERC721.default_ERC721

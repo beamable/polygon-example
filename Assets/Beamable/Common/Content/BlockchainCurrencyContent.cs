@@ -11,5 +11,5 @@ public class BlockchainCurrencyContentRef : CurrencyRef<BlockchainCurrencyConten
 public class BlockchainCurrencyContent : CurrencyContent
 {
     [MustReferenceContent]
-    public SolidityContractContentLink contract;
+    public ERC20ContractContentLink contract;
 }

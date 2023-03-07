@@ -11,5 +11,5 @@ public class BlockchainItemContentRef : ItemRef<BlockchainItemContent> { }
 public class BlockchainItemContent : ItemContent
 {
     [MustReferenceContent]
-    public SolidityContractContentLink contract;
+    public ERC721ContractContentLink contract;
 }

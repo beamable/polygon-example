@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Beamable.Common;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts.Storage;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts.Storage.Models;
 using MongoDB.Driver;
@@ -10,6 +11,9 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Accounts
 {
     internal static class AccountsService
     {
+        private const string RealmWalletName = "default-wallet";
+        
+        private static Account _cachedRealmAccount;
         public static readonly KeyStoreScryptService KeystoreService = new();
 
         public static async Task<Account> GetOrCreateAccount(IMongoDatabase db, string accountName)
@@ -24,13 +28,25 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Accounts
             var privateKeyBytes = ecKey.GetPrivateKeyAsBytes();
             var newAccount = new Account(privateKeyBytes);
 
-            await db.TryInsertValut(new Vault
+            var insertSuccessful = await db.TryInsertValut(new Vault
             {
                 Name = accountName,
                 Value = KeystoreService.EncryptAndGenerateKeyStore(Configuration.RealmSecret, privateKeyBytes, newAccount.Address)
             });
 
-            return newAccount;
+            if (insertSuccessful)
+            {
+                BeamableLogger.Log("Saved account {accountName} -> {accountAddress}", accountName, newAccount.Address);
+                return newAccount;
+            }
+
+            BeamableLogger.LogWarning("Account already created, fetching again");
+            return await GetOrCreateAccount(db, accountName);
+        }
+
+        public static async ValueTask<Account> GetOrCreateRealmAccount(IMongoDatabase db)
+        {
+            return _cachedRealmAccount ??= await GetOrCreateAccount(db, RealmWalletName);
         }
     }
 }

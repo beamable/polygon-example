@@ -1,14 +1,20 @@
 using System;
 using Beamable.Common.Content;
+using Beamable.Common.Content.Contracts;
+using Beamable.Common.Content.Validation;
+using UnityEngine;
 
 [Serializable]
-public class ERC721ContractContentRef : SolidityContractContentRef<ERC721ContractContent>
+public class ERC721ContractContentRef : ContentRef<ERC721ContractContent>
 {
 }
 
-[ContentType("ERC721")]
 [Serializable]
-public class ERC721ContractContent : SolidityContractContent
+public class ERC721ContractContentLink : ContentLink<ERC721ContractContent> { }
+
+[ContentType("ERC721_contracts")]
+[Serializable]
+public class ERC721ContractContent : ContentObject, IContractContent
 {
     public ERC721ContractContent()
     {
@@ -32,4 +38,11 @@ contract DefaultContract is ERC721, Ownable {
 }
 ".Trim();
     }
+    
+    [TextArea(10, 100)]
+    [CannotBeBlank]
+    public string contractTemplate;
+    
+    public string GetTemplate() => contractTemplate;
+    public ContractType GetContractType() => ContractType.ERC721;
 }
