@@ -51,11 +51,11 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
                 .ToListAsync();
         }
 
-        public static async Task<List<Mint>> GetMintsFor(this IMongoDatabase db, string userId)
+        public static async Task<List<Mint>> GetMintsFor(this IMongoDatabase db, string ownerAddress)
         {
             var collection = await Get(db);
             var mints = await collection
-                .Find(x => x.OwnerAddress == userId)
+                .Find(x => x.OwnerAddress == ownerAddress)
                 .ToListAsync();
             return mints;
         }
