@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage.Models;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
-using Nethereum.Web3.Accounts;
 
 namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
 {
@@ -15,10 +15,10 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
         {
             _web3 = web3;
         }
-        
+
         public Task<TransactionReceipt> Mint(Contract contract, long amount, string ownerAddress, IDictionary<string, string> properties)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

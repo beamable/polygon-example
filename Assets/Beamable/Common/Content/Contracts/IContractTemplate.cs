@@ -1,6 +1,6 @@
 ﻿namespace Beamable.Common.Content.Contracts
 {
-    public interface IContractContent
+    public interface IContractTemplate
     {
         string GetTemplate();
         ContractType GetContractType();

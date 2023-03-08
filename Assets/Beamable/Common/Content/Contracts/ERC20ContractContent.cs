@@ -10,12 +10,16 @@ public class ERC20ContractContentRef : ContentRef<ERC20ContractContent>
 }
 
 [Serializable]
-public class ERC20ContractContentLink : ContentLink<ERC20ContractContent> { }
+public class ERC20ContractContentLink : ContentLink<ERC20ContractContent>
+{
+}
 
 [ContentType("ERC20_contracts")]
 [Serializable]
-public class ERC20ContractContent : ContentObject, IContractContent
+public class ERC20ContractContent : ContentObject, IContractTemplate
 {
+    [TextArea(10, 100)] [CannotBeBlank] public string contractTemplate;
+
     public ERC20ContractContent()
     {
         contractTemplate = @"
@@ -34,11 +38,14 @@ contract DefaultContract is ERC20, Ownable {
 }
 ".Trim();
     }
-    
-    [TextArea(10, 100)]
-    [CannotBeBlank]
-    public string contractTemplate;
 
-    public string GetTemplate() => contractTemplate;
-    public ContractType GetContractType() => ContractType.ERC20;
+    public string GetTemplate()
+    {
+        return contractTemplate;
+    }
+
+    public ContractType GetContractType()
+    {
+        return ContractType.ERC20;
+    }
 }

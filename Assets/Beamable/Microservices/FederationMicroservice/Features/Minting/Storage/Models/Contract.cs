@@ -7,6 +7,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
     public record Contract
     {
         [BsonElement("_id")] public ObjectId ID { get; set; } = ObjectId.GenerateNewId();
+
         public string ContentId { get; set; }
         public string PublicKey { get; set; }
         public ContractType Type { get; set; }

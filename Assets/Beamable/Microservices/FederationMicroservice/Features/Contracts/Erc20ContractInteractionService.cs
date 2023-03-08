@@ -16,10 +16,10 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
         {
             _rpcClient = new EthRpcClient(web3);
         }
-        
+
         public async Task<TransactionReceipt> Mint(Contract contract, long amount, string ownerAddress, IDictionary<string, string> properties)
         {
-            var receipt =  await _rpcClient.SendRequestAndWaitForReceiptAsync(contract.PublicKey, new ERC20MintFunctionMessage
+            var receipt = await _rpcClient.SendRequestAndWaitForReceiptAsync(contract.PublicKey, new ERC20MintFunctionMessage
             {
                 To = ownerAddress,
                 Amount = Web3.Convert.ToWei(amount)

@@ -12,6 +12,8 @@ namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler.Models
         [JsonProperty("sources")] public Dictionary<string, OutputSource> Sources { get; set; } = null!;
         [JsonProperty("contracts")] public OutputContracts Contracts { get; set; } = null!;
 
+        public bool HasErrors => Errors?.Any(x => x.Severity == "error") == true;
+
         public class OutputError
         {
             [JsonProperty("type")] public string Type { get; set; } = null!;
@@ -61,7 +63,5 @@ namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler.Models
                 }
             }
         }
-
-        public bool HasErrors => Errors?.Any(x => x.Severity == "error") == true;
     }
 }

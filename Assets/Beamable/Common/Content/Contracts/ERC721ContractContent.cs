@@ -10,12 +10,16 @@ public class ERC721ContractContentRef : ContentRef<ERC721ContractContent>
 }
 
 [Serializable]
-public class ERC721ContractContentLink : ContentLink<ERC721ContractContent> { }
+public class ERC721ContractContentLink : ContentLink<ERC721ContractContent>
+{
+}
 
 [ContentType("ERC721_contracts")]
 [Serializable]
-public class ERC721ContractContent : ContentObject, IContractContent
+public class ERC721ContractContent : ContentObject, IContractTemplate
 {
+    [TextArea(10, 100)] [CannotBeBlank] public string contractTemplate;
+
     public ERC721ContractContent()
     {
         contractTemplate = @"
@@ -38,11 +42,14 @@ contract DefaultContract is ERC721, Ownable {
 }
 ".Trim();
     }
-    
-    [TextArea(10, 100)]
-    [CannotBeBlank]
-    public string contractTemplate;
-    
-    public string GetTemplate() => contractTemplate;
-    public ContractType GetContractType() => ContractType.ERC721;
+
+    public string GetTemplate()
+    {
+        return contractTemplate;
+    }
+
+    public ContractType GetContractType()
+    {
+        return ContractType.ERC721;
+    }
 }

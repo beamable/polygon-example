@@ -7,11 +7,8 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Funct
     [Function("mint")]
     public class ERC20MintFunctionMessage : FunctionMessage
     {
-        [Parameter("address", "to", 1)]
-        public virtual string To { get; set; }
+        [Parameter("address", "to")] public virtual string To { get; set; }
 
-        [Parameter("uint256", "amount", 2)]
-        public virtual BigInteger Amount { get; set; }
+        [Parameter("uint256", "amount", 2)] public virtual BigInteger Amount { get; set; }
     }
-
 }

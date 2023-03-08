@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36eccfbb140c42e46b7561fbdcad7f7d, type: 3}
-  m_Name: beamsword
+  m_Script: {fileID: 11500000, guid: 112df1e7bdbd6134dbb85fed3c1ee001, type: 3}
+  m_Name: DCoin1
   m_EditorClassIdentifier: 
-  _tags: []
+  _tags:
+  - base
   icon:
     m_AssetGUID: 
     m_SubObjectName: 
@@ -20,10 +21,11 @@ MonoBehaviour:
     m_EditorAssetChanged: 0
   clientPermission:
     writeSelf: 0
+  startingAmount: 0
   federation:
     HasValue: 1
     Value:
       Service: FederationMicroservice
       Namespace: polygon
   contract:
-    Id: solidity_contracts.ERC721.default_ERC721
+    Id: ERC20_contracts.DefaultERC20ContractContent

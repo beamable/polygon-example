@@ -28,12 +28,13 @@ namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler
                 process.StartInfo =
                     new ProcessStartInfo(GetExecutable(), $"--standard-json {inputFilePath}")
                     {
-                        RedirectStandardOutput = true
+                        RedirectStandardOutput = true,
+                        WorkingDirectory = SolcDirectory
                     };
                 process.Start();
 
-                StreamReader reader = process.StandardOutput;
-                string outputText = await reader.ReadToEndAsync();
+                var reader = process.StandardOutput;
+                var outputText = await reader.ReadToEndAsync();
 
                 var output = JsonConvert.DeserializeObject<SolidityCompilerOutput>(outputText);
                 process.WaitForExit(5000);
@@ -53,15 +54,9 @@ namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler
 
         private static string GetExecutable()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return Path.Combine(SolcDirectory, LinuxExecutable);
-            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return Path.Combine(SolcDirectory, LinuxExecutable);
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return Path.Combine(SolcDirectory, WindowsExecutable);
-            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return Path.Combine(SolcDirectory, WindowsExecutable);
 
             throw new NotImplementedException(
                 $"{nameof(SolidityCompiler)} is not implemented for {RuntimeInformation.OSDescription}");

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 112df1e7bdbd6134dbb85fed3c1ee001, type: 3}
-  m_Name: beamcoin
+  m_Name: DCoin2
   m_EditorClassIdentifier: 
   _tags: []
   icon:
@@ -22,9 +22,9 @@ MonoBehaviour:
     writeSelf: 0
   startingAmount: 0
   federation:
-    HasValue: 1
+    HasValue: 0
     Value:
-      Service: FederationMicroservice
-      Namespace: polygon
+      Service: 
+      Namespace: 
   contract:
-    Id: solidity_contracts.ERC20.default_ERC20
+    Id: 
