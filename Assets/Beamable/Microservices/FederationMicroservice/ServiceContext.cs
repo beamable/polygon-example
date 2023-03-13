@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage.Models;
+using MongoDB.Driver;
 using Nethereum.Web3.Accounts;
 
 namespace Beamable.Microservices.FederationMicroservice
@@ -7,5 +8,6 @@ namespace Beamable.Microservices.FederationMicroservice
     {
         public static IMongoDatabase Database;
         public static Account RealmAccount;
+        public static Contract DefaultContract;
     }
 }

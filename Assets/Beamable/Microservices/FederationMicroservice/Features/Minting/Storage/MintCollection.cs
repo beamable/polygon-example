@@ -7,20 +7,20 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
 {
     public static class MintCollection
     {
-        private static IMongoCollection<MintMapping> _collection;
+        private static IMongoCollection<Mint> _collection;
 
-        private static async ValueTask<IMongoCollection<MintMapping>> Get(IMongoDatabase db)
+        private static async ValueTask<IMongoCollection<Mint>> Get(IMongoDatabase db)
         {
             if (_collection is null)
             {
-                _collection = db.GetCollection<MintMapping>("mint");
+                _collection = db.GetCollection<Mint>("mint");
                 await _collection.Indexes.CreateManyAsync(new[]
                     {
-                        new CreateIndexModel<MintMapping>(
-                            Builders<MintMapping>.IndexKeys
-                                .Ascending(x => x.OwnerAddress)
+                        new CreateIndexModel<Mint>(
+                            Builders<Mint>.IndexKeys
+                                .Ascending(x => x.ContractName)
                                 .Ascending(x => x.ContentId)
-                                .Ascending(x => x.PublicKey),
+                                .Ascending(x => x.TokenId),
                             new CreateIndexOptions { Unique = true }
                         )
                     }
@@ -30,26 +30,34 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
             return _collection;
         }
 
-        public static async Task<List<MintMapping>> GetMintMappingsFor(this IMongoDatabase db, string ownerAddress)
+        public static async Task<List<Mint>> GetMints(this IMongoDatabase db, string contractName)
         {
             var collection = await Get(db);
             var mints = await collection
-                .Find(x => x.OwnerAddress == ownerAddress)
+                .Find(x => x.ContractName == contractName)
                 .ToListAsync();
             return mints;
         }
 
-        public static async Task InsertMintMapping(this IMongoDatabase db, MintMapping mint)
+        public static async Task<List<Mint>> GetMintsForContent(this IMongoDatabase db, string contractName, string contentId)
         {
             var collection = await Get(db);
-            try
-            {
-                await collection.InsertOneAsync(mint);
-            }
-            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
-            {
-                // Ignore duplicate key error
-            }
+            var mints = await collection
+                .Find(x => x.ContractName == contractName && x.ContentId == contentId)
+                .ToListAsync();
+            return mints;
+        }
+
+        public static async Task InsertMint(this IMongoDatabase db, Mint mint)
+        {
+            var collection = await Get(db);
+            await collection.InsertOneAsync(mint);
+        }
+
+        public static async Task InsertMints(this IMongoDatabase db, IEnumerable<Mint> mints)
+        {
+            var collection = await Get(db);
+            await collection.InsertManyAsync(mints);
         }
     }
 }

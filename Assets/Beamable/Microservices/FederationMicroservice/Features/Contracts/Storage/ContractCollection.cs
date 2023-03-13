@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage.Models;
+﻿using System.Threading.Tasks;
+using Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage.Models;
 using MongoDB.Driver;
 
-namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
+namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage
 {
     public static class ContractCollection
     {
@@ -19,7 +17,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
                     {
                         new CreateIndexModel<Contract>(
                             Builders<Contract>.IndexKeys
-                                .Ascending(x => x.ContentId)
+                                .Ascending(x => x.Name)
                                 .Ascending(x => x.PublicKey),
                             new CreateIndexOptions { Unique = true }
                         )
@@ -30,12 +28,12 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
             return _collection;
         }
 
-        public static async Task<List<Contract>> GetContractsFor(this IMongoDatabase db, IEnumerable<string> contentIds)
+        public static async Task<Contract> GetContract(this IMongoDatabase db, string name)
         {
             var collection = await Get(db);
             return await collection
-                .Find(x => contentIds.Contains(x.ContentId))
-                .ToListAsync();
+                .Find(x => x.Name == name)
+                .FirstOrDefaultAsync();
         }
 
         public static async Task<bool> TryInsertContract(this IMongoDatabase db, Contract contract)

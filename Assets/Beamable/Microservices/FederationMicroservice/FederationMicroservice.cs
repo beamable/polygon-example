@@ -8,8 +8,7 @@ using Beamable.Common.Api;
 using Beamable.Common.Content;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts.Exceptions;
-using Beamable.Microservices.FederationMicroservice.Features.Minting;
-using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage;
+using Beamable.Microservices.FederationMicroservice.Features.Contracts;
 using Beamable.Server;
 using Beamable.Server.Api.RealmConfig;
 using ItemCreateRequest = Beamable.Common.Api.Inventory.ItemCreateRequest;
@@ -33,6 +32,10 @@ namespace Beamable.Microservices.FederationMicroservice
             // Load realm account/wallet
             var realmAccount = await AccountsService.GetOrCreateRealmAccount();
             ServiceContext.RealmAccount = realmAccount;
+
+            // Load the default contract
+            var defaultContract = await ContractService.GetOrCreateContract("default", Configuration.DefaultContractSource);
+            ServiceContext.DefaultContract = defaultContract;
         }
 
         public async Promise<FederatedAuthenticationResponse> Authenticate(string token, string challenge, string solution)
@@ -88,35 +91,35 @@ namespace Beamable.Microservices.FederationMicroservice
 
             var content = await ResolveContent(contentIds);
 
-            var contracts = (await db.GetContractsFor(contentIds))
-                .ToDictionary(x => x.ContentId, x => x);
-
-            var tasks = new List<Task>();
-
-            foreach (var currency in currencies)
-            {
-                tasks.Add(Task.Run(async () =>
-                {
-                    try
-                    {
-                        if (!contracts.ContainsKey(currency.Key))
-                        {
-                            var newCurrencyContract = await MintingService.CreateContract(content[currency.Key]);
-                            contracts[currency.Key] = newCurrencyContract;
-                        }
-
-                        await MintingService.Mint(contracts[currency.Key], currency.Value, id);
-                    }
-                    catch (Exception ex)
-                    {
-                        BeamableLogger.LogError(ex);
-                    }
-                }));
-            }
-
-            var requester = Requester;
-            var userId = Context.UserId;
-            _ = Task.WhenAll(tasks).ContinueWith(_ => ReportBackTheState(id, userId, requester));
+            // var contracts = (await db.GetContractsFor(contentIds))
+            //     .ToDictionary(x => x.Name, x => x);
+            //
+            // var tasks = new List<Task>();
+            //
+            // foreach (var currency in currencies)
+            // {
+            //     tasks.Add(Task.Run(async () =>
+            //     {
+            //         try
+            //         {
+            //             if (!contracts.ContainsKey(currency.Key))
+            //             {
+            //                 var newCurrencyContract = await MintingService.CreateContract(content[currency.Key]);
+            //                 contracts[currency.Key] = newCurrencyContract;
+            //             }
+            //
+            //             await MintingService.Mint(contracts[currency.Key], currency.Value, id);
+            //         }
+            //         catch (Exception ex)
+            //         {
+            //             BeamableLogger.LogError(ex);
+            //         }
+            //     }));
+            // }
+            //
+            // var requester = Requester;
+            // var userId = Context.UserId;
+            // _ = Task.WhenAll(tasks).ContinueWith(_ => ReportBackTheState(id, userId, requester));
 
             return new FederatedInventoryProxyState //TODO: treat a NULL response as "I will report later/don't change the state yet"? 
             {
@@ -128,8 +131,6 @@ namespace Beamable.Microservices.FederationMicroservice
         public async Promise<FederatedInventoryProxyState> GetInventoryState(string id)
         {
             var db = ServiceContext.Database;
-            var userMints = await db.GetMintMappingsFor(id);
-
             throw new NotImplementedException();
         }
 
