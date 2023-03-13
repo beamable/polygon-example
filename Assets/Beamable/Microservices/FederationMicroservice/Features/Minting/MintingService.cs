@@ -56,6 +56,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
             var contractSource = Stubble.Render(contractTemplate, new { ContentId = contentId, Properties = properties });
 
             var compilerInput = new SolidityCompilerInput(contractSource, new[] { "abi", "evm.bytecode" });
+            
             var compilerOutput = await Solc.Compile(compilerInput);
 
             if (compilerOutput.HasErrors)

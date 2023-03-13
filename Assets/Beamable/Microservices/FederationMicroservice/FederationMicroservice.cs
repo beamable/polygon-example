@@ -97,13 +97,20 @@ namespace Beamable.Microservices.FederationMicroservice
             {
                 tasks.Add(Task.Run(async () =>
                 {
-                    if (!contracts.ContainsKey(currency.Key))
+                    try
                     {
-                        var newCurrencyContract = await MintingService.CreateContract(content[currency.Key]);
-                        contracts[currency.Key] = newCurrencyContract;
-                    }
+                        if (!contracts.ContainsKey(currency.Key))
+                        {
+                            var newCurrencyContract = await MintingService.CreateContract(content[currency.Key]);
+                            contracts[currency.Key] = newCurrencyContract;
+                        }
 
-                    await MintingService.Mint(contracts[currency.Key], currency.Value, id);
+                        await MintingService.Mint(contracts[currency.Key], currency.Value, id);
+                    }
+                    catch (Exception ex)
+                    {
+                        BeamableLogger.LogError(ex);
+                    }
                 }));
             }
 
