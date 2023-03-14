@@ -1,0 +1,11 @@
+﻿using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.Contracts;
+
+namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Messages
+{
+    [Function("setURI")]
+    internal class ER1155SetUriFunctionMessage : FunctionMessage
+    {
+        [Parameter("string", "newUri")] public virtual string NewUri { get; set; }
+    }
+}

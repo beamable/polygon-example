@@ -1,15 +1,15 @@
 ﻿using System.Numerics;
 using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.Contracts;
 
 namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Messages
 {
-    [Function("safeMint")]
-    internal class ERC721MintFunctionMessage
+    [Function("mint")]
+    internal class ERC1155MintFunctionMessage : FunctionMessage
     {
         [Parameter("address", "to")] public virtual string To { get; set; }
-
         [Parameter("uint256", "tokenId", 2)] public virtual BigInteger TokenId { get; set; }
-
-        [Parameter("string", "uri", 3)] public virtual string Uri { get; set; }
+        [Parameter("uint256", "amount", 3)] public virtual BigInteger Amount { get; set; }
+        [Parameter("string", "metadataHash", 4)] public virtual string MetadataHash { get; set; }
     }
 }

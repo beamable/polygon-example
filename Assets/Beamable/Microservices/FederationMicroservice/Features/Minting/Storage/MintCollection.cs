@@ -21,7 +21,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
                                 .Ascending(x => x.ContractName)
                                 .Ascending(x => x.ContentId)
                                 .Ascending(x => x.TokenId),
-                            new CreateIndexOptions { Unique = true }
+                            new CreateIndexOptions { Unique = false }
                         )
                     }
                 );

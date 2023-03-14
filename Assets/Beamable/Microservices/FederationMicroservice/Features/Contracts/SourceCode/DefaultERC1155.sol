@@ -4,14 +4,10 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-// TODO: use hooks to manage the custom mappings
-
 contract GameToken is ERC1155, Ownable {
     mapping(uint256 => string) private _metadata;
-
     mapping(address => uint256[]) private _tokensPerAddress;
-    mapping(address => mapping(uint256 => bool))
-    private _tokensPerAddressPresence;
+    mapping(address => mapping(uint256 => bool)) private _tokensPerAddressPresence;
 
     string private _uri;
 
@@ -22,18 +18,13 @@ contract GameToken is ERC1155, Ownable {
     }
 
     function mint(
-        address account,
-        uint256 id,
+        address to,
+        uint256 tokenId,
         uint256 amount,
         string memory metadataHash
     ) public onlyOwner {
-        _mint(account, id, amount, "");
-        _metadata[id] = metadataHash;
-
-        if (_tokensPerAddressPresence[account][id] != true) {
-            _tokensPerAddress[account].push(id);
-            _tokensPerAddressPresence[account][id] = true;
-        }
+        _mint(to, tokenId, amount, "");
+        _metadata[tokenId] = metadataHash;
     }
 
     function batchMint(
@@ -56,22 +47,14 @@ contract GameToken is ERC1155, Ownable {
         }
     }
 
-    function uri(uint256 tokenid)
-    public
-    view
-    override
-    returns (string memory)
-    {
-        return string(abi.encodePacked(_uri, _metadata[tokenid], ".json"));
+    function uri(uint256 tokenId) public view override returns (string memory) {
+        return string(abi.encodePacked(_uri, _metadata[tokenId]));
     }
 
     function getInventory(address account)
     public
     view
-    returns (
-        uint256[] memory,
-        uint256[] memory
-    )
+    returns (uint256[] memory, uint256[] memory)
     {
         uint256[] memory tokenIds = _tokensPerAddress[account];
         uint256[] memory tokenAmounts = new uint256[](tokenIds.length);
@@ -80,5 +63,26 @@ contract GameToken is ERC1155, Ownable {
             tokenAmounts[i] = balanceOf(account, tokenId);
         }
         return (tokenIds, tokenAmounts);
+    }
+
+    function _afterTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal virtual override {
+        for (uint256 i = 0; i < ids.length; i++) {
+            uint256 tokenId = ids[i];
+            if (!_tokensPerAddressPresence[to][tokenId]) {
+                _tokensPerAddress[to].push(tokenId);
+                _tokensPerAddressPresence[to][tokenId] = true;
+            }
+            if (from != address(0) && balanceOf(from, tokenId) == 0) {
+                _tokensPerAddressPresence[from][tokenId] = false;
+            }
+        }
+        super._afterTokenTransfer(operator, from, to, ids, amounts, data);
     }
 }

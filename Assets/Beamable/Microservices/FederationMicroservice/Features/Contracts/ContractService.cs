@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Beamable.Common;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Exceptions;
+using Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Messages;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage.Models;
 using Beamable.Microservices.FederationMicroservice.Features.EthRpc;
+using Beamable.Microservices.FederationMicroservice.Features.Minting;
 using Beamable.Microservices.FederationMicroservice.SolidityCompiler;
 using Beamable.Microservices.FederationMicroservice.SolidityCompiler.Models;
 using Nethereum.Web3;
@@ -17,6 +20,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
         
         public static async ValueTask<Contract> GetOrCreateContract(string name, string sourceCode)
         {
+            // TODO: use concurrent dictionary for cache
             return _cachedContract ??= await CompileAndSaveContract(name, sourceCode);
         }
 
@@ -41,15 +45,33 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
                 Name = name,
                 PublicKey = result.ContractAddress
             };
+            
+            await SetBaseUri(contract);
 
             var insertSuccess = await ServiceContext.Database.TryInsertContract(contract);
 
             if (insertSuccess)
             {
+                BeamableLogger.Log("Contract {contractName} created successfully. Address: {contractAddress}", name, result.ContractAddress);
                 return contract;
             }
             BeamableLogger.LogWarning("Contract {contractName} already created, fetching again", name);
             return await GetOrCreateContract(name, sourceCode);
+        }
+
+        private static async Task SetBaseUri(Contract contract)
+        {
+            var uriString = await ServiceContext.Requester.SaveExternalMetadata(new NftExternalMetadata());
+            Uri uri = new Uri(uriString);
+            // Remove the last segment
+            var segments = uri.Segments.Take(uri.Segments.Length - 1);
+            string baseUriString = $"{uri.Scheme}://{uri.Host}{string.Concat(segments)}";
+
+            BeamableLogger.Log("Setting the base uri to {baseUri}", baseUriString);
+            await ServiceContext.RpcClient.SendRequestAndWaitForReceiptAsync(contract.PublicKey, new ER1155SetUriFunctionMessage
+            {
+                NewUri = baseUriString
+            });
         }
 
         private static async Task<SolidityCompilerOutput> Compile(string sourceCode)

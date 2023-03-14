@@ -10,5 +10,6 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
         public string ContractName { get; set; }
         public string ContentId { get; set; }
         public uint TokenId { get; set; }
+        public uint Amount { get; set; }
     }
 }

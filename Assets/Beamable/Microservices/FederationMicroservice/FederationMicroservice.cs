@@ -9,8 +9,10 @@ using Beamable.Common.Content;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts.Exceptions;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts;
+using Beamable.Microservices.FederationMicroservice.Features.EthRpc;
 using Beamable.Server;
 using Beamable.Server.Api.RealmConfig;
+using Nethereum.Web3;
 using ItemCreateRequest = Beamable.Common.Api.Inventory.ItemCreateRequest;
 
 namespace Beamable.Microservices.FederationMicroservice
@@ -24,7 +26,8 @@ namespace Beamable.Microservices.FederationMicroservice
             var storage = initializer.GetService<IStorageObjectConnectionProvider>();
             var database = await storage.FederationStorageDatabase();
             ServiceContext.Database = database;
-
+            ServiceContext.Requester = initializer.GetService<IBeamableRequester>();
+            
             // Load realm configuration
             var realmConfigService = initializer.GetService<IMicroserviceRealmConfigService>();
             Configuration.RealmConfig = await realmConfigService.GetRealmConfigSettings();
@@ -32,19 +35,17 @@ namespace Beamable.Microservices.FederationMicroservice
             // Load realm account/wallet
             var realmAccount = await AccountsService.GetOrCreateRealmAccount();
             ServiceContext.RealmAccount = realmAccount;
+            
+            // Set the RPC client
+            ServiceContext.RpcClient = new EthRpcClient(new Web3(realmAccount, Configuration.RPCEndpoint));
 
             // Load the default contract
-            var defaultContract = await ContractService.GetOrCreateContract("default", Configuration.DefaultContractSource);
+            var defaultContract = await ContractService.GetOrCreateContract(Configuration.DefaultContractName, Configuration.DefaultContractSource);
             ServiceContext.DefaultContract = defaultContract;
         }
 
         public async Promise<FederatedAuthenticationResponse> Authenticate(string token, string challenge, string solution)
         {
-            return new FederatedAuthenticationResponse
-            {
-                user_id = token
-            };
-
             if (Configuration.AllowManagedAccounts)
                 if (string.IsNullOrEmpty(token) && Context.UserId != 0L)
                 {
