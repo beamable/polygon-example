@@ -13,5 +13,6 @@ namespace Beamable.Microservices.FederationMicroservice
         public static Contract DefaultContract;
         public static EthRpcClient RpcClient;
         public static IBeamableRequester Requester;
+        public static string BaseMetadataUri;
     }
 }

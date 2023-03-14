@@ -17,7 +17,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
     {
         private static readonly HttpClient HttpClient = new();
 
-        public static async Task<string> SaveExternalMetadata(this IBeamableRequester beamableRequester, NftExternalMetadata metadata)
+        public static async Task<string> SaveExternalMetadata(NftExternalMetadata metadata)
         {
             var metadataJsonString = JsonConvert.SerializeObject(metadata);
             var metadataPayload = Encoding.UTF8.GetBytes(metadataJsonString);
@@ -27,7 +27,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
                 var md5Bytes = md5.ComputeHash(metadataPayload);
                 var payloadChecksum = BitConverter.ToString(md5Bytes).Replace("-", "");
 
-                var saveBinaryResponse = await beamableRequester.Request<SaveBinaryResponse>(Method.POST,
+                var saveBinaryResponse = await ServiceContext.Requester.Request<SaveBinaryResponse>(Method.POST,
                     "/basic/content/binary", new SaveBinaryRequest
                     {
                         binary = new List<BinaryDefinition>
@@ -44,16 +44,13 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
                 var binaryResponse = saveBinaryResponse.binary.First();
                 var signedUrl = binaryResponse.uploadUri;
 
-                BeamableLogger.Log("Signed url: {SignedUrl}", signedUrl);
-
                 var content = new ByteArrayContent(metadataPayload);
                 content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
                 content.Headers.ContentMD5 = md5Bytes;
 
                 var putContentResponse = await HttpClient.PutAsync(signedUrl, content);
-				
-                BeamableLogger.Log("Put content resulted in {StatusCode}, body: {Body}",
-                    putContentResponse.StatusCode.ToString(), await putContentResponse.Content.ReadAsStringAsync());
+
+                BeamableLogger.Log("Put content resulted in {StatusCode}", putContentResponse.StatusCode.ToString());
                 putContentResponse.EnsureSuccessStatusCode();
 
                 return binaryResponse.uri;

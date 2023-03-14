@@ -1,7 +1,7 @@
 ﻿using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 
-namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Messages
+namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Models
 {
     [Function("setURI")]
     internal class ER1155SetUriFunctionMessage : FunctionMessage

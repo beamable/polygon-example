@@ -44,10 +44,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Accounts
 
         public static async ValueTask<Account> GetOrCreateRealmAccount()
         {
-            if (_cachedRealmAccount == null)
-            {
-                _cachedRealmAccount = await GetOrCreateAccount(RealmAccountName);
-            }
+            if (_cachedRealmAccount == null) _cachedRealmAccount = await GetOrCreateAccount(RealmAccountName);
 
             return _cachedRealmAccount;
         }

@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Assets.Beamable.Microservices.FederationMicroservice.Features.EthRpc;
 using Beamable.Common;
 using Beamable.Microservices.FederationMicroservice.Features.EthRpc.Exceptions;
+using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
@@ -55,9 +57,28 @@ namespace Beamable.Microservices.FederationMicroservice.Features.EthRpc
 
                 BeamableLogger.Log("Response: {@response}", result);
 
-                if (!result.Succeeded()) throw new TransactionFailedException("Transaction failed. Check microservice logs.");
+                if (!result.Succeeded()) throw new ContractException("Transaction failed. Check microservice logs.");
 
                 return result;
+            }
+        }
+
+        public async Task<TFunctionOutput> SendFunctionQueryAsync<TContractMessage, TFunctionOutput>(string contractAddress, TContractMessage functionMessage = null, CancellationTokenSource tokenSource = null)
+            where TContractMessage : FunctionMessage, new()
+            where TFunctionOutput : IFunctionOutputDTO, new()
+        {
+            using (new Measure("SendFunctionQueryAsync"))
+            {
+                var handler = _web3.Eth.GetContractQueryHandler<TContractMessage>();
+
+                try
+                {
+                    return await handler.QueryDeserializingToObjectAsync<TFunctionOutput>(functionMessage, contractAddress);
+                }
+                catch (Exception ex)
+                {
+                    throw new ContractException(ex.Message);
+                }
             }
         }
     }

@@ -7,7 +7,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract GameToken is ERC1155, Ownable {
     mapping(uint256 => string) private _metadata;
     mapping(address => uint256[]) private _tokensPerAddress;
-    mapping(address => mapping(uint256 => bool)) private _tokensPerAddressPresence;
+    mapping(address => mapping(uint256 => bool))
+    private _tokensPerAddressPresence;
 
     string private _uri;
 
@@ -54,15 +55,17 @@ contract GameToken is ERC1155, Ownable {
     function getInventory(address account)
     public
     view
-    returns (uint256[] memory, uint256[] memory)
+    returns (uint256[] memory tokenIds, uint256[] memory tokenAmounts, string[] memory metadataHashes)
     {
-        uint256[] memory tokenIds = _tokensPerAddress[account];
-        uint256[] memory tokenAmounts = new uint256[](tokenIds.length);
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            uint256 tokenId = tokenIds[i];
-            tokenAmounts[i] = balanceOf(account, tokenId);
+        uint256[] memory ids = _tokensPerAddress[account];
+        uint256[] memory amounts = new uint256[](ids.length);
+        string[] memory metadata = new string[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            uint256 tokenId = ids[i];
+            amounts[i] = balanceOf(account, tokenId);
+            metadata[i] = _metadata[tokenId];
         }
-        return (tokenIds, tokenAmounts);
+        return (ids, amounts, metadata);
     }
 
     function _afterTokenTransfer(

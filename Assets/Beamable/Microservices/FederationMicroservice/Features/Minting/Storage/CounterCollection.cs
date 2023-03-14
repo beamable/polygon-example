@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage.Models;
 using MongoDB.Driver;
 
@@ -29,21 +27,20 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
             return _collection;
         }
 
-        public static async Task<IEnumerable<int>> GetNextCounterValues(this IMongoDatabase db, IClientSessionHandle session, string counterName, int N)
+        public static async Task<uint> GetNextCounterValue(this IMongoDatabase db, IClientSessionHandle session, string counterName)
         {
             var collection = await Get(db);
-            var update = Builders<Counter>.Update.Inc(x => x.State, (uint)N);
-            
+            var update = Builders<Counter>.Update.Inc(x => x.State, (uint)1);
+
             var options = new FindOneAndUpdateOptions<Counter>
             {
                 ReturnDocument = ReturnDocument.After,
                 IsUpsert = true
             };
-            
+
             var updated = await collection.FindOneAndUpdateAsync<Counter>(session, x => x.Name == counterName, update, options);
 
-            var from = updated.State - N;
-            return Enumerable.Range((int)from, N);
+            return updated.State - 1;
         }
     }
 }
