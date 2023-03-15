@@ -4,14 +4,14 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Beamable.Common;
-using Beamable.Microservices.FederationMicroservice.SolidityCompiler.Models;
+using Beamable.Microservices.FederationMicroservice.Solidity.Models;
 using Newtonsoft.Json;
 
-namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler
+namespace Beamable.Microservices.FederationMicroservice.Solidity
 {
     public static class Solc
     {
-        private const string SolcDirectory = "federationmicroservice/Beamable.Microservice.FederationMicroservice/SolidityCompiler/Solc";
+        private const string SolcDirectory = "Solidity/Solc";
         private const string WindowsExecutable = "solc-windows-amd64-v0.8.19+commit.7dd6d404.exe";
         private const string LinuxExecutable = "solc-linux-amd64-v0.8.19+commit.7dd6d404";
 
@@ -59,7 +59,7 @@ namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return Path.Combine(SolcDirectory, WindowsExecutable);
 
             throw new NotImplementedException(
-                $"{nameof(SolidityCompiler)} is not implemented for {RuntimeInformation.OSDescription}");
+                $"{nameof(Solc)} is not implemented for {RuntimeInformation.OSDescription}");
         }
     }
 }

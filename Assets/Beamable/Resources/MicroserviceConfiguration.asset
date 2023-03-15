@@ -84,7 +84,7 @@ MonoBehaviour:
       Location: Assets/Beamable/Microservices/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 2E922E48B3E683B93DF2F8EE0331AA66
+    Checksum: 101D39711BC3F7E2266B845AA0B73759
   - ServiceName: FederationStorage
     CodeClass: 2
     CodeDirectory: Assets\Beamable\StorageObjects\FederationStorage
@@ -111,7 +111,7 @@ MonoBehaviour:
       Location: Assets/Beamable/StorageObjects/FederationStorage/Beamable.Storage.FederationStorage.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 7625FCD98E294B910B9CF31389E99587
+    Checksum: 98C2F7360D465EA955A6A66EB5D58601
   - ServiceName: Unity.Beamable.Customer.Common
     CodeClass: 3
     CodeDirectory: Assets\Beamable\Common
@@ -126,7 +126,7 @@ MonoBehaviour:
       Location: Assets/Beamable/Common/Unity.Beamable.Customer.Common.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 0AF7513C323127F6C61058ED2EB16B80
+    Checksum: 28894D4D4470C52BD1060DC2DDF2AA84
   LastBuiltDockerImagesCodeHandles:
   - ServiceName: FederationMicroservice
     CodeClass: 1
@@ -176,7 +176,7 @@ MonoBehaviour:
       Location: Assets/Beamable/Microservices/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 2E922E48B3E683B93DF2F8EE0331AA66
+    Checksum: 4B9616C9C1C6BB51B5E759199CC4DCDC
   - ServiceName: Unity.Beamable.Customer.Common
     CodeClass: 3
     CodeDirectory: Assets\Beamable\Common
@@ -191,7 +191,7 @@ MonoBehaviour:
       Location: Assets/Beamable/Common/Unity.Beamable.Customer.Common.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 0AF7513C323127F6C61058ED2EB16B80
+    Checksum: 28894D4D4470C52BD1060DC2DDF2AA84
   - ServiceName: FederationStorage
     CodeClass: 2
     CodeDirectory: Assets\Beamable\StorageObjects\FederationStorage
@@ -218,7 +218,7 @@ MonoBehaviour:
       Location: Assets/Beamable/StorageObjects/FederationStorage/Beamable.Storage.FederationStorage.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 7625FCD98E294B910B9CF31389E99587
+    Checksum: 98C2F7360D465EA955A6A66EB5D58601
   CustomContainerPrefix: 
   AutoReferenceContent: 0
   AutoBuildCommonAssembly: 1
@@ -226,7 +226,7 @@ MonoBehaviour:
   ColorLogs: 1
   DisableDockerBuildkit: 0
   DockerDesktopCheckInMicroservicesWindow: 1
-  EnableHotModuleReload: 1
+  EnableHotModuleReload: 0
   EnableAutoPrune: 1
   EnablePrePublishHealthCheck: 1
   PrePublishHealthCheckTimeout:

@@ -9,7 +9,7 @@ namespace Beamable.Microservices.FederationMicroservice
     internal static class Configuration
     {
         private const string ConfigurationNamespace = "federation_polygon";
-        private const string DefaultERC1155Path = "federationmicroservice/Beamable.Microservice.FederationMicroservice/Features/Contracts/SourceCode/DefaultERC1155.sol";
+        private const string DefaultERC1155Path = "Solidity/Contracts/DefaultERC1155.sol";
 
         public static readonly string RealmSecret = Environment.GetEnvironmentVariable("SECRET");
 

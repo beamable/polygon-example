@@ -4,7 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Beamable.Microservices.FederationMicroservice.SolidityCompiler.Models
+namespace Beamable.Microservices.FederationMicroservice.Solidity.Models
 {
     public class SolidityCompilerOutput
     {

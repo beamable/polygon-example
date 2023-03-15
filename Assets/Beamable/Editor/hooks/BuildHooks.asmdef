@@ -1,0 +1,14 @@
+{
+	"name": "Custom.Editor.BuildHooks",
+	"references": ["Beamable.Microservice.FederationMicroservice",
+		"Unity.Beamable.Editor.Server",
+		"Unity.Beamable.Server.Runtime",
+		"Unity.Beamable.Server.Runtime.Shared",
+		"Unity.Beamable.Editor",
+		"Unity.Beamable.Runtime.Common"
+	],
+	"autoReferenced":false,
+	"includePlatforms":[
+		"Editor"
+	]
+}

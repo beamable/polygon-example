@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Beamable.Common;
@@ -63,7 +64,7 @@ namespace Beamable.Microservices.FederationMicroservice
         public async Promise<FederatedInventoryProxyState> StartInventoryTransaction(string id, string transaction, Dictionary<string, long> currencies, List<ItemCreateRequest> newItems)
         {
             CheckContext();
-            
+
             if (currencies.Any() || newItems.Any())
             {
                 var currencyMints = currencies.Select(c => new MintRequest
@@ -91,7 +92,7 @@ namespace Beamable.Microservices.FederationMicroservice
         public async Promise<FederatedInventoryProxyState> GetInventoryState(string id)
         {
             CheckContext();
-            
+
             var inventoryResponse = await ServiceContext.RpcClient
                 .SendFunctionQueryAsync<ER1155GetInventoryFunctionMessage, ERC1155GetInventoryFunctionOutput>(
                     ServiceContext.DefaultContract.PublicKey,
@@ -134,6 +135,15 @@ namespace Beamable.Microservices.FederationMicroservice
             };
         }
 
+        [AdminOnlyCallable]
+        public IList<string> Test(string path)
+        {
+            var files = Directory.EnumerateFiles(path).Select(x => $"FILE: {x}").ToList();
+            var directories = Directory.EnumerateDirectories(path).Select(x => $"DIR: {x}").ToList();
+
+            return files.Union(directories).ToList();
+        }
+
         [InitializeServices]
         public static async Task Initialize(IServiceInitializer initializer)
         {
@@ -161,6 +171,7 @@ namespace Beamable.Microservices.FederationMicroservice
             }
             catch (Exception ex)
             {
+                BeamableLogger.LogException(ex);
                 BeamableLogger.LogWarning("Contract {contractName} couldn't be loaded. Please fix the issues and restart the microservice to make it operational.", Configuration.DefaultContractName);
             }
         }
