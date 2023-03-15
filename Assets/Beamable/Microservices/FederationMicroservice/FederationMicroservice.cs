@@ -8,6 +8,7 @@ using Beamable.Common.Api.Inventory;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts.Exceptions;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts;
+using Beamable.Microservices.FederationMicroservice.Features.Contracts.Exceptions;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Models;
 using Beamable.Microservices.FederationMicroservice.Features.EthRpc;
 using Beamable.Microservices.FederationMicroservice.Features.Minting;
@@ -61,6 +62,8 @@ namespace Beamable.Microservices.FederationMicroservice
 
         public async Promise<FederatedInventoryProxyState> StartInventoryTransaction(string id, string transaction, Dictionary<string, long> currencies, List<ItemCreateRequest> newItems)
         {
+            CheckContext();
+            
             if (currencies.Any() || newItems.Any())
             {
                 var currencyMints = currencies.Select(c => new MintRequest
@@ -87,6 +90,8 @@ namespace Beamable.Microservices.FederationMicroservice
 
         public async Promise<FederatedInventoryProxyState> GetInventoryState(string id)
         {
+            CheckContext();
+            
             var inventoryResponse = await ServiceContext.RpcClient
                 .SendFunctionQueryAsync<ER1155GetInventoryFunctionMessage, ERC1155GetInventoryFunctionOutput>(
                     ServiceContext.DefaultContract.PublicKey,
@@ -148,9 +153,21 @@ namespace Beamable.Microservices.FederationMicroservice
             // Set the RPC client
             ServiceContext.RpcClient = new EthRpcClient(new Web3(realmAccount, Configuration.RPCEndpoint));
 
-            // Load the default contract
-            var defaultContract = await ContractService.GetOrCreateContract(Configuration.DefaultContractName, Configuration.DefaultContractSource);
-            ServiceContext.DefaultContract = defaultContract;
+            // Try loading the default contract
+            try
+            {
+                var defaultContract = await ContractService.GetOrCreateContract(Configuration.DefaultContractName, Configuration.DefaultContractSource);
+                ServiceContext.DefaultContract = defaultContract;
+            }
+            catch (Exception ex)
+            {
+                BeamableLogger.LogWarning("Contract {contractName} couldn't be loaded. Please fix the issues and restart the microservice to make it operational.", Configuration.DefaultContractName);
+            }
+        }
+
+        private static void CheckContext()
+        {
+            if (ServiceContext.DefaultContract is null) throw new ContractNotLoadedException($"Contract {Configuration.DefaultContractName} is not loaded. Please fix the issues and restart the microservice.");
         }
     }
 }
