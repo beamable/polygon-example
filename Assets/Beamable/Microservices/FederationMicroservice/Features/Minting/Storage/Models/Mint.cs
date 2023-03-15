@@ -7,9 +7,6 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
     public record Mint : TokenIdMapping
     {
         [BsonElement("_id")] public ObjectId ID { get; set; } = ObjectId.GenerateNewId();
-
         public string ContractName { get; set; }
-        public uint Amount { get; set; }
-        public DateTime Created { get; set; }
     }
 }

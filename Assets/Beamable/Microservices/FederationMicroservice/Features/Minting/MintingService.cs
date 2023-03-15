@@ -53,10 +53,8 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
                 mints.Add(new Mint
                 {
                     ContentId = request.ContentId,
-                    Amount = request.Amount,
                     ContractName = Configuration.DefaultContractName,
-                    TokenId = tokenId,
-                    Created = DateTime.Now
+                    TokenId = tokenId
                 });
                 BeamableLogger.Log("Generated mint: {@mint}", new { request.ContentId, request.Amount, request.Properties, request.IsUnique, TokenId = tokenId, MetadataHash = metadataHash });
             }

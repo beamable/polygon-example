@@ -23,7 +23,14 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
                                 .Ascending(x => x.ContractName)
                                 .Ascending(x => x.ContentId)
                                 .Ascending(x => x.TokenId),
-                            new CreateIndexOptions { Unique = false }
+                            new CreateIndexOptions { Unique = true }
+                        ),
+                        new CreateIndexModel<Mint>(
+                            Builders<Mint>.IndexKeys
+                                .Ascending(x => x.ContractName)
+                                .Ascending(x => x.TokenId)
+                                .Ascending(x => x.ContentId),
+                            new CreateIndexOptions { Unique = true }
                         )
                     }
                 );
@@ -31,26 +38,16 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
 
             return _collection;
         }
-
-        public static async Task<List<Mint>> GetMints(this IMongoDatabase db, string contractName)
-        {
-            var collection = await Get(db);
-            var mints = await collection
-                .Find(x => x.ContractName == contractName)
-                .ToListAsync();
-            return mints;
-        }
-
+        
         public static async Task<List<TokenIdMapping>> GetTokenMappingsForContent(this IMongoDatabase db, string contractName, IEnumerable<string> contentIds)
         {
             var collection = await Get(db);
             var mints = await collection
-                .Aggregate()
-                .Match(x => x.ContractName == contractName && contentIds.Contains(x.ContentId))
-                .Group(x => x.ContentId, x => new TokenIdMapping
+                .Find(x => x.ContractName == contractName && contentIds.Contains(x.ContentId))
+                .Project(x => new TokenIdMapping
                 {
-                    ContentId = x.Key,
-                    TokenId = x.First().TokenId
+                    ContentId = x.ContentId,
+                    TokenId = x.TokenId
                 })
                 .ToListAsync();
 
@@ -61,28 +58,32 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
         {
             var collection = await Get(db);
             var mints = await collection
-                .Aggregate()
-                .Match(x => x.ContractName == contractName && tokenIds.Contains(x.TokenId))
-                .Group(x => x.TokenId, x => new TokenIdMapping
+                .Find(x => x.ContractName == contractName && tokenIds.Contains(x.TokenId))
+                .Project(x => new TokenIdMapping
                 {
-                    ContentId = x.First().ContentId,
-                    TokenId = x.Key
+                    ContentId = x.ContentId,
+                    TokenId = x.TokenId
                 })
                 .ToListAsync();
 
             return mints;
         }
 
-        public static async Task InsertMint(this IMongoDatabase db, Mint mint)
-        {
-            var collection = await Get(db);
-            await collection.InsertOneAsync(mint);
-        }
-
         public static async Task InsertMints(this IMongoDatabase db, IClientSessionHandle session, IEnumerable<Mint> mints)
         {
             var collection = await Get(db);
-            await collection.InsertManyAsync(session, mints);
+            var options = new InsertManyOptions()
+            {
+                IsOrdered = false
+            };
+            try
+            {
+                await collection.InsertManyAsync(session, mints, options);
+            }
+            catch (MongoBulkWriteException e) when (e.WriteErrors.All(x => x.Category == ServerErrorCategory.DuplicateKey))
+            {
+                // Ignore
+            }
         }
     }
 }
