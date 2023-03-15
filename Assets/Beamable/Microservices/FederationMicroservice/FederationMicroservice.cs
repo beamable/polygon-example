@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Beamable.Common;
 using Beamable.Common.Api;
+using Beamable.Common.Api.Inventory;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts;
 using Beamable.Microservices.FederationMicroservice.Features.Accounts.Exceptions;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts;
@@ -14,40 +15,12 @@ using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage;
 using Beamable.Server;
 using Beamable.Server.Api.RealmConfig;
 using Nethereum.Web3;
-using ItemCreateRequest = Beamable.Common.Api.Inventory.ItemCreateRequest;
 
 namespace Beamable.Microservices.FederationMicroservice
 {
     [Microservice("FederationMicroservice")]
     public class FederationMicroservice : Microservice, IFederatedInventory<PolygonCloudIdentity>
     {
-        /// TODO:
-        ///  - support for items
-
-        [InitializeServices]
-        public static async Task Initialize(IServiceInitializer initializer)
-        {
-            var storage = initializer.GetService<IStorageObjectConnectionProvider>();
-            var database = await storage.FederationStorageDatabase();
-            ServiceContext.Database = database;
-            ServiceContext.Requester = initializer.GetService<IBeamableRequester>();
-
-            // Load realm configuration
-            var realmConfigService = initializer.GetService<IMicroserviceRealmConfigService>();
-            Configuration.RealmConfig = await realmConfigService.GetRealmConfigSettings();
-
-            // Load realm account/wallet
-            var realmAccount = await AccountsService.GetOrCreateRealmAccount();
-            ServiceContext.RealmAccount = realmAccount;
-
-            // Set the RPC client
-            ServiceContext.RpcClient = new EthRpcClient(new Web3(realmAccount, Configuration.RPCEndpoint));
-
-            // Load the default contract
-            var defaultContract = await ContractService.GetOrCreateContract(Configuration.DefaultContractName, Configuration.DefaultContractSource);
-            ServiceContext.DefaultContract = defaultContract;
-        }
-        
         public async Promise<FederatedAuthenticationResponse> Authenticate(string token, string challenge, string solution)
         {
             if (Configuration.AllowManagedAccounts)
@@ -121,29 +94,63 @@ namespace Beamable.Microservices.FederationMicroservice
                     {
                         Account = id
                     });
-            
+
             var existingMints = (await ServiceContext.Database.GetTokenMappingsForTokens(Configuration.DefaultContractName, inventoryResponse.TokenIds))
                 .ToDictionary(x => x.TokenId, x => x);
-            
-            var currencies = new Dictionary<string, long>();
 
-            for (int i = 0; i < inventoryResponse.TokenIds.Count; i++)
+            var currencies = new Dictionary<string, long>();
+            var items = new List<(string, FederatedItemProxy)>();
+
+            for (var i = 0; i < inventoryResponse.TokenIds.Count; i++)
             {
                 var tokenId = inventoryResponse.TokenIds[i];
                 var contentId = existingMints[tokenId].ContentId;
                 var hash = inventoryResponse.MetadataHashes[i];
                 var amount = inventoryResponse.TokenAmounts[i];
 
-                if (contentId.StartsWith("currency."))
-                {
-                    currencies.Add(contentId, amount);
-                }
+                if (contentId.StartsWith("currency.")) currencies.Add(contentId, amount);
+
+                if (contentId.StartsWith("items."))
+                    items.Add((contentId, new FederatedItemProxy
+                    {
+                        proxyId = tokenId.ToString(),
+                        properties = await NtfExternalMetadataService.LoadItemProperties(hash)
+                    }));
             }
-            
+
+            var itemGroups = items
+                .GroupBy(i => i.Item1)
+                .ToDictionary(g => g.Key, g => g.Select(i => i.Item2).ToList());
+
             return new FederatedInventoryProxyState
             {
-                currencies = currencies
+                currencies = currencies,
+                items = itemGroups
             };
+        }
+
+        [InitializeServices]
+        public static async Task Initialize(IServiceInitializer initializer)
+        {
+            var storage = initializer.GetService<IStorageObjectConnectionProvider>();
+            var database = await storage.FederationStorageDatabase();
+            ServiceContext.Database = database;
+            ServiceContext.Requester = initializer.GetService<IBeamableRequester>();
+
+            // Load realm configuration
+            var realmConfigService = initializer.GetService<IMicroserviceRealmConfigService>();
+            Configuration.RealmConfig = await realmConfigService.GetRealmConfigSettings();
+
+            // Load realm account/wallet
+            var realmAccount = await AccountsService.GetOrCreateRealmAccount();
+            ServiceContext.RealmAccount = realmAccount;
+
+            // Set the RPC client
+            ServiceContext.RpcClient = new EthRpcClient(new Web3(realmAccount, Configuration.RPCEndpoint));
+
+            // Load the default contract
+            var defaultContract = await ContractService.GetOrCreateContract(Configuration.DefaultContractName, Configuration.DefaultContractSource);
+            ServiceContext.DefaultContract = defaultContract;
         }
     }
 }

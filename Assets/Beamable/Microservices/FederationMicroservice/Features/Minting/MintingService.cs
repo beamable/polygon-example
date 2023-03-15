@@ -7,6 +7,7 @@ using Beamable.Common;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Models;
 using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage;
 using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage.Models;
+using MongoDB.Driver.Core.Clusters;
 
 namespace Beamable.Microservices.FederationMicroservice.Features.Minting
 {
@@ -29,8 +30,8 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
             var tokenMetadataHashes = new List<string>();
 
             var mongoSession = await db.Client.StartSessionAsync();
-            var isMongoStandalone = mongoSession.Client.Cluster.Description.Type == MongoDB.Driver.Core.Clusters.ClusterType.Standalone;
-            
+            var isMongoStandalone = mongoSession.Client.Cluster.Description.Type == ClusterType.Standalone;
+
             if (!isMongoStandalone)
                 mongoSession.StartTransaction();
 
@@ -70,18 +71,15 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
             await ServiceContext.RpcClient.SendRequestAndWaitForReceiptAsync(ServiceContext.DefaultContract.PublicKey, functionMessage);
 
             await db.InsertMints(mongoSession, mints);
-            
+
             if (mongoSession.IsInTransaction)
                 await mongoSession.CommitTransactionAsync();
         }
 
         private static async Task<string> SaveMetadata(MintRequest request)
         {
-            var uriString = await NtfExternalMetadataService.SaveExternalMetadata(new NftExternalMetadata(new Dictionary<string, string>(request.Properties)
-            {
-                { NftExternalMetadata.SpecialProperty.Name, request.ContentId }
-            }));
-            BeamableLogger.Log("Metadata URI: {uri}", uriString);
+            var uriString = await NtfExternalMetadataService.SaveExternalMetadata(new NftExternalMetadata(request.Properties));
+            BeamableLogger.Log("Metadata saved at {uri}", uriString);
             var uri = new Uri(uriString);
             return uri.Segments.Last();
         }

@@ -6,6 +6,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Funct
     [Function("setURI")]
     internal class ER1155SetUriFunctionMessage : FunctionMessage
     {
-        [Parameter("string", "newUri")] public virtual string NewUri { get; set; }
+        [Parameter("string", "newUri")]
+        public virtual string NewUri { get; set; }
     }
 }

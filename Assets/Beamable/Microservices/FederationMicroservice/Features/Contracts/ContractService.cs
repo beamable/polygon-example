@@ -22,7 +22,9 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
 
         public static async ValueTask<Contract> GetOrCreateContract(string name, string sourceCode)
         {
-            return ContractCache.GetOrAdd(name, await CompileAndSaveContract(name, sourceCode));
+            var contract = ContractCache.GetOrAdd(name, await CompileAndSaveContract(name, sourceCode));
+            ServiceContext.BaseMetadataUri = new Uri(contract.BaseMetadataUri);
+            return contract;
         }
 
         private static async Task<Contract> CompileAndSaveContract(string name, string sourceCode)
@@ -76,7 +78,6 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
             });
 
             contract.BaseMetadataUri = baseUriString;
-            ServiceContext.BaseMetadataUri = baseUriString;
         }
 
         private static async Task<SolidityCompilerOutput> Compile(string sourceCode)

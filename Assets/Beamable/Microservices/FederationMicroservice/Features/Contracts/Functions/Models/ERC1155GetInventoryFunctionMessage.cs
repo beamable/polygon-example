@@ -6,6 +6,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Funct
     [Function("getInventory", "uint256[], uint256[]")]
     internal class ER1155GetInventoryFunctionMessage : FunctionMessage
     {
-        [Parameter("address", "account")] public virtual string Account { get; set; }
+        [Parameter("address", "account")]
+        public virtual string Account { get; set; }
     }
 }

@@ -50,11 +50,29 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
 
                 var putContentResponse = await HttpClient.PutAsync(signedUrl, content);
 
-                BeamableLogger.Log("Put content resulted in {StatusCode}", putContentResponse.StatusCode.ToString());
                 putContentResponse.EnsureSuccessStatusCode();
 
                 return binaryResponse.uri;
             }
+        }
+
+        public static async Task<List<ItemProperty>> LoadItemProperties(string hash)
+        {
+            var uri = new Uri(ServiceContext.BaseMetadataUri, hash);
+            var responseString = await HttpClient.GetStringAsync(uri);
+            var metadata = JsonConvert.DeserializeObject<NftExternalMetadata>(responseString);
+            if (metadata is not null)
+            {
+                var properties = metadata.GetProperties();
+                return properties.Select(p => new ItemProperty
+                {
+                    name = p.Key,
+                    value = p.Value
+                }).ToList();
+            }
+
+            BeamableLogger.LogWarning("Couldn't load metadata for {hash}", hash);
+            return new List<ItemProperty>();
         }
     }
 }

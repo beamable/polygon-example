@@ -8,7 +8,8 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Accounts.Storag
 {
     public record Vault
     {
-        [BsonElement("_id")] public ObjectId ID { get; set; } = ObjectId.GenerateNewId();
+        [BsonElement("_id")]
+        public ObjectId ID { get; set; } = ObjectId.GenerateNewId();
 
         public string Name { get; set; }
         public KeyStore<ScryptParams> Value { get; set; }

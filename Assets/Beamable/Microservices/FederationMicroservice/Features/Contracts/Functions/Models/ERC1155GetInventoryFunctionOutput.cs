@@ -6,7 +6,8 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Funct
     [FunctionOutput]
     internal class ERC1155GetInventoryFunctionOutput : IFunctionOutputDTO
     {
-        [Parameter("uint256[]", "tokenIds")] public virtual List<uint> TokenIds { get; set; }
+        [Parameter("uint256[]", "tokenIds")]
+        public virtual List<uint> TokenIds { get; set; }
 
         [Parameter("uint256[]", "tokenAmounts", 2)]
         public virtual List<uint> TokenAmounts { get; set; }

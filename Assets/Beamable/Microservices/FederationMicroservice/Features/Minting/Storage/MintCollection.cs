@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage.Models;
 using MongoDB.Driver;
@@ -38,7 +37,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
 
             return _collection;
         }
-        
+
         public static async Task<List<TokenIdMapping>> GetTokenMappingsForContent(this IMongoDatabase db, string contractName, IEnumerable<string> contentIds)
         {
             var collection = await Get(db);
@@ -72,7 +71,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
         public static async Task InsertMints(this IMongoDatabase db, IClientSessionHandle session, IEnumerable<Mint> mints)
         {
             var collection = await Get(db);
-            var options = new InsertManyOptions()
+            var options = new InsertManyOptions
             {
                 IsOrdered = false
             };
