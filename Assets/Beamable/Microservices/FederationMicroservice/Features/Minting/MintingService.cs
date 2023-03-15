@@ -79,7 +79,10 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
 
         private static async Task<string> SaveMetadata(MintRequest request)
         {
-            var uriString = await NtfExternalMetadataService.SaveExternalMetadata(NftExternalMetadata.Generate(request.Properties, request.ContentId));
+            var uriString = await NtfExternalMetadataService.SaveExternalMetadata(new NftExternalMetadata(new Dictionary<string, string>(request.Properties)
+            {
+                { NftExternalMetadata.SpecialProperty.Name, request.ContentId }
+            }));
             BeamableLogger.Log("Metadata URI: {uri}", uriString);
             var uri = new Uri(uriString);
             return uri.Segments.Last();

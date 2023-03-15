@@ -23,7 +23,6 @@ namespace Beamable.Microservices.FederationMicroservice
     {
         /// TODO:
         ///  - support for items
-        ///  - metadata special props -> $image, $... (plus reverse mapping)
         ///  - add supply tracking to contract
         ///  - remove "amount" from Mint collection and make the combination (contract, token, content) unique -> simplify queries, remove aggregation
 

@@ -1,57 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Newtonsoft.Json;
 
 namespace Beamable.Microservices.FederationMicroservice.Features.Minting
 {
     [Serializable]
     public class NftExternalMetadata
     {
-        public string name;
-        public string symbol;
-        public string description;
-        public string image;
-        public string animation_url;
-        public string external_url;
-        public IList<MetadataAttribute> attributes;
+        [JsonExtensionData]
+        public Dictionary<string, object> SpecialProperties { get; }
+        
+        [JsonProperty("properties")]
+        private Dictionary<string, string> Properties { get; }
 
-        public static NftExternalMetadata Generate(Dictionary<string, string> properties, string name)
+        public NftExternalMetadata(Dictionary<string, string> properties)
         {
-            var image = properties.GetValueOrDefault("image");
-            if (image is not null) properties.Remove("image");
+            SpecialProperties = new Dictionary<string, object>();
+            Properties = new Dictionary<string, string>();
 
-            var symbol = properties.GetValueOrDefault("symbol");
-            if (symbol is not null) properties.Remove("symbol");
-
-            var description = properties.GetValueOrDefault("description");
-            if (description is not null) properties.Remove("description");
-
-            var animation_url = properties.GetValueOrDefault("animation_url");
-            if (animation_url is not null) properties.Remove("animation_url");
-
-            var external_url = properties.GetValueOrDefault("external_url");
-            if (external_url is not null) properties.Remove("external_url");
-
-            return new NftExternalMetadata
+            foreach (var property in properties)
             {
-                name = name,
-                image = image,
-                symbol = symbol,
-                description = description,
-                animation_url = animation_url,
-                external_url = external_url,
-                attributes = properties.Select(p => new MetadataAttribute
+                if (property.Key.StartsWith("$"))
                 {
-                    trait_type = p.Key,
-                    value = p.Value
-                }).ToList()
-            };
+                    SpecialProperties.Add(property.Key.TrimStart('$'), property.Value);
+                }
+                else
+                {
+                    Properties.Add(property.Key, property.Value);
+                }
+            }
         }
-    }
 
-    public class MetadataAttribute
-    {
-        public string trait_type;
-        public string value;
+        public Dictionary<string, string> GetProperties()
+        {
+            var properties = new Dictionary<string, string>();
+            
+            foreach (var data in SpecialProperties)
+            {
+                properties.Add($"${data.Key}", data.Value.ToString() ?? "");
+            }
+            
+            foreach (var property in Properties)
+            {
+                properties.Add(property.Key, property.Value);
+            }
+
+            return properties;
+        }
+
+        public static class SpecialProperty
+        {
+            public const string Name = "$name";
+            public const string Image = "$image";
+            public const string Description = "$description";
+            public const string Uri = "$uri";
+        }
     }
 }

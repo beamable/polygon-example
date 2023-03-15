@@ -12,19 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 112df1e7bdbd6134dbb85fed3c1ee001, type: 3}
   m_Name: BeamCoin
   m_EditorClassIdentifier: 
+  <ContentName>k__BackingField: BeamCoin
+  _contentTypeName: currency.blockchain
+  <ManifestID>k__BackingField: 
+  <Version>k__BackingField: 
   _tags: []
+  <Created>k__BackingField: 
+  <LastChanged>k__BackingField: 1678379956341
+  _hadValidationErrors: 0
+  <SerializeToConsoleRequested>k__BackingField: 0
+  <_serializedValidationGUID>k__BackingField: 00000000-0000-0000-0000-00000000000f
   icon:
     m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
+    m_CachedAsset: {fileID: 0}
+    m_CachedGUID: 
     m_EditorAssetChanged: 0
   clientPermission:
     writeSelf: 0
   startingAmount: 0
   federation:
-    HasValue: 0
+    HasValue: 1
     Value:
-      Service: 
-      Namespace: 
+      Service: FederationMicroservice
+      Namespace: polygon
   contract:
-    Id: 
+    Id: ERC20_contracts.DefaultERC20ContractContent

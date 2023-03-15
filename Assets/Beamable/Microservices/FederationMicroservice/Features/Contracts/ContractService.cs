@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Beamable.Common;
@@ -62,7 +63,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
 
         private static async Task SetBaseUri(Contract contract)
         {
-            var uriString = await NtfExternalMetadataService.SaveExternalMetadata(new NftExternalMetadata());
+            var uriString = await NtfExternalMetadataService.SaveExternalMetadata(new NftExternalMetadata(new Dictionary<string, string>()));
             var uri = new Uri(uriString);
             // Remove the last segment
             var segments = uri.Segments.Take(uri.Segments.Length - 1);

@@ -12,10 +12,213 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a96b3852b93843ef94fc3401214399e, type: 3}
   m_Name: MicroserviceConfiguration
   m_EditorClassIdentifier: 
-  Microservices: []
-  StorageObjects: []
-  ServiceCodeHandlesOnLastDomainReload: []
-  LastBuiltDockerImagesCodeHandles: []
+  Microservices:
+  - ServiceName: FederationMicroservice
+    Enabled: 1
+    Archived: 0
+    TemplateId: small
+    CustomDockerFileStrings: 
+    IncludeDebugTools: 1
+    DebugData:
+      Username: root
+      Password: Password!
+      SshPort: 11100
+    LastBuiltCheckSum: 
+    RobotId: 
+  StorageObjects:
+  - StorageName: FederationStorage
+    StorageType: mongov1
+    Enabled: 1
+    Archived: 0
+    TemplateId: small
+    LocalDataPort: 12100
+    LocalUIPort: 13100
+    LocalInitUser: beamable
+    LocalInitPass: beamable
+  ServiceCodeHandlesOnLastDomainReload:
+  - ServiceName: FederationMicroservice
+    CodeClass: 1
+    CodeDirectory: Assets\Beamable\Microservices\FederationMicroservice
+    AsmDefInfo:
+      Name: Beamable.Microservice.FederationMicroservice
+      References:
+      - Unity.Beamable.Runtime.Common
+      - Unity.Beamable.Server.Runtime
+      - Unity.Beamable.Server.Runtime.Shared
+      - Unity.Beamable
+      - Beamable.SmallerJSON
+      - Unity.Beamable.Server.Runtime.Common
+      - Unity.Beamable.Server.Runtime.Mocks
+      - Unity.Beamable.Customer.Common
+      - Beamable.Storage.FederationStorage
+      DllReferences:
+      - DnsClient.dll
+      - MongoDB.Bson.dll
+      - MongoDB.Driver.Core.dll
+      - MongoDB.Driver.dll
+      - MongoDB.Libmongocrypt.dll
+      - System.Runtime.CompilerServices.Unsafe.dll
+      - SharpCompress.dll
+      - Nethereum.Web3.dll
+      - Nethereum.JsonRpc.Client.dll
+      - Nethereum.Contracts.dll
+      - Microsoft.Extensions.Logging.Abstractions.dll
+      - Nethereum.RPC.dll
+      - Nethereum.ABI.dll
+      - Nethereum.Accounts.dll
+      - Nethereum.BlockchainProcessing.dll
+      - Nethereum.Hex.dll
+      - Nethereum.Model.dll
+      - Nethereum.RLP.dll
+      - Nethereum.Signer.dll
+      - Nethereum.Util.dll
+      - BouncyCastle.Crypto.dll
+      - Nethereum.Merkle.Patricia.dll
+      - Nethereum.Signer.EIP712.dll
+      - Nethereum.KeyStore.dll
+      - Nethereum.JsonRpc.RpcClient.dll
+      - System.Buffers.dll
+      - Newtonsoft.Json.dll
+      - Stubble.Core.dll
+      - System.Collections.Immutable.dll
+      Location: Assets/Beamable/Microservices/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
+      IncludePlatforms: []
+      AutoReferenced: 0
+    Checksum: 2E922E48B3E683B93DF2F8EE0331AA66
+  - ServiceName: FederationStorage
+    CodeClass: 2
+    CodeDirectory: Assets\Beamable\StorageObjects\FederationStorage
+    AsmDefInfo:
+      Name: Beamable.Storage.FederationStorage
+      References:
+      - Unity.Beamable.Runtime.Common
+      - Unity.Beamable.Server.Runtime
+      - Unity.Beamable.Server.Runtime.Shared
+      - Unity.Beamable
+      - Beamable.SmallerJSON
+      - Unity.Beamable.Server.Runtime.Common
+      - Unity.Beamable.Server.Runtime.Mocks
+      - Unity.Beamable.Customer.Common
+      DllReferences:
+      - DnsClient.dll
+      - MongoDB.Bson.dll
+      - MongoDB.Driver.Core.dll
+      - MongoDB.Driver.dll
+      - MongoDB.Libmongocrypt.dll
+      - System.Buffers.dll
+      - System.Runtime.CompilerServices.Unsafe.dll
+      - SharpCompress.dll
+      Location: Assets/Beamable/StorageObjects/FederationStorage/Beamable.Storage.FederationStorage.asmdef
+      IncludePlatforms: []
+      AutoReferenced: 0
+    Checksum: 7625FCD98E294B910B9CF31389E99587
+  - ServiceName: Unity.Beamable.Customer.Common
+    CodeClass: 3
+    CodeDirectory: Assets\Beamable\Common
+    AsmDefInfo:
+      Name: Unity.Beamable.Customer.Common
+      References:
+      - Unity.Beamable.Runtime.Common
+      - Unity.Beamable.Server.Runtime.Common
+      - Unity.Beamable.Server.Runtime.Mocks
+      - Beamable.SmallerJSON
+      DllReferences: []
+      Location: Assets/Beamable/Common/Unity.Beamable.Customer.Common.asmdef
+      IncludePlatforms: []
+      AutoReferenced: 0
+    Checksum: 0AF7513C323127F6C61058ED2EB16B80
+  LastBuiltDockerImagesCodeHandles:
+  - ServiceName: FederationMicroservice
+    CodeClass: 1
+    CodeDirectory: Assets\Beamable\Microservices\FederationMicroservice
+    AsmDefInfo:
+      Name: Beamable.Microservice.FederationMicroservice
+      References:
+      - Unity.Beamable.Runtime.Common
+      - Unity.Beamable.Server.Runtime
+      - Unity.Beamable.Server.Runtime.Shared
+      - Unity.Beamable
+      - Beamable.SmallerJSON
+      - Unity.Beamable.Server.Runtime.Common
+      - Unity.Beamable.Server.Runtime.Mocks
+      - Unity.Beamable.Customer.Common
+      - Beamable.Storage.FederationStorage
+      DllReferences:
+      - DnsClient.dll
+      - MongoDB.Bson.dll
+      - MongoDB.Driver.Core.dll
+      - MongoDB.Driver.dll
+      - MongoDB.Libmongocrypt.dll
+      - System.Runtime.CompilerServices.Unsafe.dll
+      - SharpCompress.dll
+      - Nethereum.Web3.dll
+      - Nethereum.JsonRpc.Client.dll
+      - Nethereum.Contracts.dll
+      - Microsoft.Extensions.Logging.Abstractions.dll
+      - Nethereum.RPC.dll
+      - Nethereum.ABI.dll
+      - Nethereum.Accounts.dll
+      - Nethereum.BlockchainProcessing.dll
+      - Nethereum.Hex.dll
+      - Nethereum.Model.dll
+      - Nethereum.RLP.dll
+      - Nethereum.Signer.dll
+      - Nethereum.Util.dll
+      - BouncyCastle.Crypto.dll
+      - Nethereum.Merkle.Patricia.dll
+      - Nethereum.Signer.EIP712.dll
+      - Nethereum.KeyStore.dll
+      - Nethereum.JsonRpc.RpcClient.dll
+      - System.Buffers.dll
+      - Newtonsoft.Json.dll
+      - Stubble.Core.dll
+      - System.Collections.Immutable.dll
+      Location: Assets/Beamable/Microservices/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
+      IncludePlatforms: []
+      AutoReferenced: 0
+    Checksum: 2E922E48B3E683B93DF2F8EE0331AA66
+  - ServiceName: Unity.Beamable.Customer.Common
+    CodeClass: 3
+    CodeDirectory: Assets\Beamable\Common
+    AsmDefInfo:
+      Name: Unity.Beamable.Customer.Common
+      References:
+      - Unity.Beamable.Runtime.Common
+      - Unity.Beamable.Server.Runtime.Common
+      - Unity.Beamable.Server.Runtime.Mocks
+      - Beamable.SmallerJSON
+      DllReferences: []
+      Location: Assets/Beamable/Common/Unity.Beamable.Customer.Common.asmdef
+      IncludePlatforms: []
+      AutoReferenced: 0
+    Checksum: 0AF7513C323127F6C61058ED2EB16B80
+  - ServiceName: FederationStorage
+    CodeClass: 2
+    CodeDirectory: Assets\Beamable\StorageObjects\FederationStorage
+    AsmDefInfo:
+      Name: Beamable.Storage.FederationStorage
+      References:
+      - Unity.Beamable.Runtime.Common
+      - Unity.Beamable.Server.Runtime
+      - Unity.Beamable.Server.Runtime.Shared
+      - Unity.Beamable
+      - Beamable.SmallerJSON
+      - Unity.Beamable.Server.Runtime.Common
+      - Unity.Beamable.Server.Runtime.Mocks
+      - Unity.Beamable.Customer.Common
+      DllReferences:
+      - DnsClient.dll
+      - MongoDB.Bson.dll
+      - MongoDB.Driver.Core.dll
+      - MongoDB.Driver.dll
+      - MongoDB.Libmongocrypt.dll
+      - System.Buffers.dll
+      - System.Runtime.CompilerServices.Unsafe.dll
+      - SharpCompress.dll
+      Location: Assets/Beamable/StorageObjects/FederationStorage/Beamable.Storage.FederationStorage.asmdef
+      IncludePlatforms: []
+      AutoReferenced: 0
+    Checksum: 7625FCD98E294B910B9CF31389E99587
   CustomContainerPrefix: 
   AutoReferenceContent: 0
   AutoBuildCommonAssembly: 1
