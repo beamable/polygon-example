@@ -1,0 +1,12 @@
+{
+  "name": "Unity.Beamable.Polygon.Common",
+  "autoReferenced": true,
+  "references": [
+    "Unity.Beamable.Runtime.Common",
+    "Unity.Beamable.Server.Runtime.Common",
+    "Unity.Beamable.Server.Runtime.Mocks",
+    "Beamable.SmallerJSON",
+    "Unity.Beamable.Server.Runtime",
+    "Unity.Beamable.Server.Runtime.Shared"
+  ]
+}
