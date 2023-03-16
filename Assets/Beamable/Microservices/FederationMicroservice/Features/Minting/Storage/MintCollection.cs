@@ -68,7 +68,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
             return mints;
         }
 
-        public static async Task InsertMints(this IMongoDatabase db, IClientSessionHandle session, IEnumerable<Mint> mints)
+        public static async Task InsertMints(this IMongoDatabase db, IEnumerable<Mint> mints)
         {
             var collection = await Get(db);
             var options = new InsertManyOptions
@@ -77,7 +77,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
             };
             try
             {
-                await collection.InsertManyAsync(session, mints, options);
+                await collection.InsertManyAsync(mints, options);
             }
             catch (MongoBulkWriteException e) when (e.WriteErrors.All(x => x.Category == ServerErrorCategory.DuplicateKey))
             {

@@ -7,7 +7,6 @@ using Beamable.Common;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Models;
 using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage;
 using Beamable.Microservices.FederationMicroservice.Features.Minting.Storage.Models;
-using MongoDB.Driver.Core.Clusters;
 
 namespace Beamable.Microservices.FederationMicroservice.Features.Minting
 {
@@ -29,12 +28,6 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
             var tokenAmounts = new List<BigInteger>();
             var tokenMetadataHashes = new List<string>();
 
-            var mongoSession = await db.Client.StartSessionAsync();
-            var isMongoStandalone = mongoSession.Client.Cluster.Description.Type == ClusterType.Standalone;
-
-            if (!isMongoStandalone)
-                mongoSession.StartTransaction();
-
             var mints = new List<Mint>();
 
             foreach (var request in requests)
@@ -43,7 +36,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
                 var tokenId = maybeExistingMint switch
                 {
                     { } m => m.TokenId,
-                    _ => await db.GetNextCounterValue(mongoSession, Configuration.DefaultContractName)
+                    _ => await db.GetNextCounterValue(Configuration.DefaultContractName)
                 };
                 var metadataHash = request.IsUnique ? await SaveMetadata(request) : "";
 
@@ -70,10 +63,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting
 
             await ServiceContext.RpcClient.SendRequestAndWaitForReceiptAsync(ServiceContext.DefaultContract.PublicKey, functionMessage);
 
-            await db.InsertMints(mongoSession, mints);
-
-            if (mongoSession.IsInTransaction)
-                await mongoSession.CommitTransactionAsync();
+            await db.InsertMints(mints);
         }
 
         private static async Task<string> SaveMetadata(MintRequest request)

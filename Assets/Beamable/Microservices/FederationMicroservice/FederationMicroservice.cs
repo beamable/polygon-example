@@ -63,6 +63,8 @@ namespace Beamable.Microservices.FederationMicroservice
 
         public async Promise<FederatedInventoryProxyState> StartInventoryTransaction(string id, string transaction, Dictionary<string, long> currencies, List<ItemCreateRequest> newItems)
         {
+            BeamableLogger.Log("Handling StartInventoryTransaction");
+            
             CheckContext();
 
             if (currencies.Any() || newItems.Any())

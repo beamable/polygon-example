@@ -27,7 +27,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
             return _collection;
         }
 
-        public static async Task<uint> GetNextCounterValue(this IMongoDatabase db, IClientSessionHandle session, string counterName)
+        public static async Task<uint> GetNextCounterValue(this IMongoDatabase db, string counterName)
         {
             var collection = await Get(db);
             var update = Builders<Counter>.Update.Inc(x => x.State, (uint)1);
@@ -38,7 +38,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Minting.Storage
                 IsUpsert = true
             };
 
-            var updated = await collection.FindOneAndUpdateAsync<Counter>(session, x => x.Name == counterName, update, options);
+            var updated = await collection.FindOneAndUpdateAsync<Counter>(x => x.Name == counterName, update, options);
 
             return updated.State - 1;
         }
