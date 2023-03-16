@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Beamable.Common;
 using Beamable.Microservices.FederationMicroservice.Features.SolcWrapper.Models;
@@ -12,11 +11,13 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
     public static class Solc
     {
         private const string SolcDirectory = "Solidity/Solc";
-        private const string WindowsExecutable = "solc-windows-amd64-v0.8.19+commit.7dd6d404.exe";
-        private const string LinuxExecutable = "solc-linux-amd64-v0.8.19+commit.7dd6d404";
+        private const string Executable = "solc-linux-amd64-v0.8.19+commit.7dd6d404";
+        public const int ProcessTimeoutMs = 5000;
 
         public static async Task<SolidityCompilerOutput> Compile(SolidityCompilerInput input)
         {
+            BeamableLogger.Log("Compiling with solc");
+
             var inputText = JsonConvert.SerializeObject(input);
             var inputFilePath = Path.GetTempFileName();
 
@@ -24,21 +25,8 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
 
             try
             {
-                using var process = new Process();
-                process.StartInfo =
-                    new ProcessStartInfo(GetExecutable(), $"--standard-json {inputFilePath}")
-                    {
-                        RedirectStandardOutput = true,
-                        WorkingDirectory = SolcDirectory
-                    };
-                process.Start();
-
-                var reader = process.StandardOutput;
-                var outputText = await reader.ReadToEndAsync();
-
+                var outputText = await Execute(Path.Combine(SolcDirectory, Executable), $"--standard-json {inputFilePath}", SolcDirectory);
                 var output = JsonConvert.DeserializeObject<SolidityCompilerOutput>(outputText);
-                process.WaitForExit(5000);
-
                 return output!;
             }
             catch (Exception e)
@@ -52,14 +40,36 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
             }
         }
 
-        private static string GetExecutable()
+        private static async Task<string> ExecuteBash(string command, string workingDirectory = null)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return Path.Combine(SolcDirectory, LinuxExecutable);
+            return await Execute("/bin/sh", $"-c \"{command}\"", workingDirectory);
+        }
+        
+        private static async Task<string> Execute(string program, string args, string workingDirectory = null)
+        {
+            using var process = new Process();
+            process.StartInfo =
+                new ProcessStartInfo(program, args)
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+            
+            if (workingDirectory is not null)
+                process.StartInfo.WorkingDirectory = workingDirectory;
+            
+            process.Start();
+            
+            var outputText = await process.StandardOutput.ReadToEndAsync();
+            var outputError = await process.StandardError.ReadToEndAsync();
+            var output = $"{outputText}{outputError}";
+            
+            process.WaitForExit(ProcessTimeoutMs);
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return Path.Combine(SolcDirectory, WindowsExecutable);
-
-            throw new NotImplementedException(
-                $"{nameof(Solc)} is not implemented for {RuntimeInformation.OSDescription}");
+            BeamableLogger.Log("Process output: {processOutput}", output);
+            return output;
         }
     }
 }

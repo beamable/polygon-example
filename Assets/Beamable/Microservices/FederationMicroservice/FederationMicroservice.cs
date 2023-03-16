@@ -147,32 +147,32 @@ namespace Beamable.Microservices.FederationMicroservice
         [InitializeServices]
         public static async Task Initialize(IServiceInitializer initializer)
         {
-            var storage = initializer.GetService<IStorageObjectConnectionProvider>();
-            var database = await storage.FederationStorageDatabase();
-            ServiceContext.Database = database;
-            ServiceContext.Requester = initializer.GetService<IBeamableRequester>();
-
-            // Load realm configuration
-            var realmConfigService = initializer.GetService<IMicroserviceRealmConfigService>();
-            Configuration.RealmConfig = await realmConfigService.GetRealmConfigSettings();
-
-            // Load realm account/wallet
-            var realmAccount = await AccountsService.GetOrCreateRealmAccount();
-            ServiceContext.RealmAccount = realmAccount;
-
-            // Set the RPC client
-            ServiceContext.RpcClient = new EthRpcClient(new Web3(realmAccount, Configuration.RPCEndpoint));
-
-            // Try loading the default contract
             try
             {
+                var storage = initializer.GetService<IStorageObjectConnectionProvider>();
+                var database = await storage.FederationStorageDatabase();
+                ServiceContext.Database = database;
+                ServiceContext.Requester = initializer.GetService<IBeamableRequester>();
+
+                // Load realm configuration
+                var realmConfigService = initializer.GetService<IMicroserviceRealmConfigService>();
+                Configuration.RealmConfig = await realmConfigService.GetRealmConfigSettings();
+
+                // Load realm account/wallet
+                var realmAccount = await AccountsService.GetOrCreateRealmAccount();
+                ServiceContext.RealmAccount = realmAccount;
+
+                // Set the RPC client
+                ServiceContext.RpcClient = new EthRpcClient(new Web3(realmAccount, Configuration.RPCEndpoint));
+
+                // Load the default contract
                 var defaultContract = await ContractService.GetOrCreateContract(Configuration.DefaultContractName, Configuration.DefaultContractSource);
                 ServiceContext.DefaultContract = defaultContract;
             }
             catch (Exception ex)
             {
                 BeamableLogger.LogException(ex);
-                BeamableLogger.LogWarning("Contract {contractName} couldn't be loaded. Please fix the issues and restart the microservice to make it operational.", Configuration.DefaultContractName);
+                BeamableLogger.LogWarning("Service initialization failed. Please fix the issues and restart the microservice to make it operational.");
             }
         }
 

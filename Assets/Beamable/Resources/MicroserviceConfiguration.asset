@@ -84,7 +84,7 @@ MonoBehaviour:
       Location: Assets/Beamable/Microservices/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 101D39711BC3F7E2266B845AA0B73759
+    Checksum: 246FC7B25A34C2BB887992275113BA73
   - ServiceName: FederationStorage
     CodeClass: 2
     CodeDirectory: Assets\Beamable\StorageObjects\FederationStorage
@@ -176,7 +176,7 @@ MonoBehaviour:
       Location: Assets/Beamable/Microservices/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 4B9616C9C1C6BB51B5E759199CC4DCDC
+    Checksum: 246FC7B25A34C2BB887992275113BA73
   - ServiceName: Unity.Beamable.Customer.Common
     CodeClass: 3
     CodeDirectory: Assets\Beamable\Common
