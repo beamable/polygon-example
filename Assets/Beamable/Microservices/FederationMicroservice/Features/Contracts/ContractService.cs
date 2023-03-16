@@ -10,8 +10,8 @@ using Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage.Models;
 using Beamable.Microservices.FederationMicroservice.Features.EthRpc;
 using Beamable.Microservices.FederationMicroservice.Features.Minting;
-using Beamable.Microservices.FederationMicroservice.Solidity;
-using Beamable.Microservices.FederationMicroservice.Solidity.Models;
+using Beamable.Microservices.FederationMicroservice.Features.SolcWrapper;
+using Beamable.Microservices.FederationMicroservice.Features.SolcWrapper.Models;
 using Nethereum.Web3;
 
 namespace Beamable.Microservices.FederationMicroservice.Features.Contracts

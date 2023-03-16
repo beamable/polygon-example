@@ -4,10 +4,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Beamable.Common;
-using Beamable.Microservices.FederationMicroservice.Solidity.Models;
+using Beamable.Microservices.FederationMicroservice.Features.SolcWrapper.Models;
 using Newtonsoft.Json;
 
-namespace Beamable.Microservices.FederationMicroservice.Solidity
+namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
 {
     public static class Solc
     {

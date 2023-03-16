@@ -2,7 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace Beamable.Microservices.FederationMicroservice.Solidity.Models
+namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper.Models
 {
     public class SolidityCompilerInput
     {
