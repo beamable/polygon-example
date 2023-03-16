@@ -10,12 +10,16 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
 {
     public static class Solc
     {
+        private static bool _initialized;
+        
         private const string SolcDirectory = "Solidity/Solc";
         private const string Executable = "solc-linux-amd64-v0.8.19+commit.7dd6d404";
         public const int ProcessTimeoutMs = 5000;
 
         public static async Task<SolidityCompilerOutput> Compile(SolidityCompilerInput input)
         {
+            await Initialize();
+            
             BeamableLogger.Log("Compiling with solc");
 
             var inputText = JsonConvert.SerializeObject(input);
@@ -37,6 +41,16 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
             finally
             {
                 File.Delete(inputFilePath);
+            }
+        }
+
+        private static async ValueTask Initialize()
+        {
+            if (!_initialized)
+            {
+                BeamableLogger.Log("Adding gcompat compatibility layer package");
+                var result = await ExecuteBash("apk add gcompat");
+                _initialized = true;
             }
         }
 
