@@ -50,6 +50,9 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
             {
                 BeamableLogger.Log("Adding gcompat compatibility layer package");
                 var result = await ExecuteBash("apk add gcompat");
+                
+                BeamableLogger.Log("Changing permissions of Solidity/Solc");
+                await ExecuteBash("chmod -R 755 /subapp/Solidity/Solc");
                 _initialized = true;
             }
         }

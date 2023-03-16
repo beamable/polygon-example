@@ -107,7 +107,7 @@ Shader "Sprites/HueShiftUnlit"
 
 				float3 hsv = rgb2hsv(c.rgb);
 				hsv.r += _HueShift;
-				hsv.g += _SaturationShift;
+				hsv.b += _SaturationShift;
 				c.rgb = hsv2rgb(hsv);
 				
 				return c;
