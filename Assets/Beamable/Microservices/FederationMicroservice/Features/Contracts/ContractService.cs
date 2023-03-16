@@ -8,11 +8,9 @@ using Beamable.Microservices.FederationMicroservice.Features.Contracts.Exception
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Functions.Models;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage;
 using Beamable.Microservices.FederationMicroservice.Features.Contracts.Storage.Models;
-using Beamable.Microservices.FederationMicroservice.Features.EthRpc;
 using Beamable.Microservices.FederationMicroservice.Features.Minting;
 using Beamable.Microservices.FederationMicroservice.Features.SolcWrapper;
 using Beamable.Microservices.FederationMicroservice.Features.SolcWrapper.Models;
-using Nethereum.Web3;
 
 namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
 {
@@ -31,7 +29,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
         {
             var persistedContract = await ServiceContext.Database.GetContract(name);
             if (persistedContract is not null) return persistedContract;
-
+            
             BeamableLogger.Log("Creating contract {contractName}", name);
 
             var compilerOutput = await Compile(sourceCode);
@@ -39,9 +37,8 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts
             var abi = contractOutput.GetAbi();
             var contractByteCode = contractOutput.GetBytecode();
 
-            var rpcClient = new EthRpcClient(new Web3(ServiceContext.RealmAccount, Configuration.RPCEndpoint));
-            var gas = await rpcClient.EstimateContractGasAsync(ServiceContext.RealmAccount, abi, contractByteCode, ServiceContext.RealmAccount.Address);
-            var result = await rpcClient.DeployContractAsync(ServiceContext.RealmAccount, abi, contractByteCode, gas);
+            var gas = await ServiceContext.RpcClient.EstimateContractGasAsync(ServiceContext.RealmAccount, abi, contractByteCode, ServiceContext.RealmAccount.Address);
+            var result = await ServiceContext.RpcClient.DeployContractAsync(ServiceContext.RealmAccount, abi, contractByteCode, gas);
 
             var contract = new Contract
             {
