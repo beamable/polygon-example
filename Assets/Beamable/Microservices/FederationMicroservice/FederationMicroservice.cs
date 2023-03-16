@@ -135,6 +135,15 @@ namespace Beamable.Microservices.FederationMicroservice
             };
         }
 
+        [AdminOnlyCallable]
+        public IList<string> Test(string path)
+        {
+            var files = Directory.EnumerateFiles(path).Select(x => $"FILE: {x}").ToList();
+            var directories = Directory.EnumerateDirectories(path).Select(x => $"DIR: {x}").ToList();
+
+            return files.Union(directories).ToList();
+        }
+
         [InitializeServices]
         public static async Task Initialize(IServiceInitializer initializer)
         {
