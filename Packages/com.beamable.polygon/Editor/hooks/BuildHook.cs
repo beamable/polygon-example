@@ -6,7 +6,7 @@ namespace Beamable.Editor.Polygon.Hooks
 {
     public class FederationMicroserviceBuildHook : IMicroserviceBuildHook<FederationMicroservice>
     {
-        const string SourceBasePath = "Assets/Beamable/Microservices/FederationMicroservice";
+        const string SourceBasePath = "Packages/com.beamable.polygon/Runtime/FederationMicroservice";
         
         public void Execute(IMicroserviceBuildContext ctx)
         {
