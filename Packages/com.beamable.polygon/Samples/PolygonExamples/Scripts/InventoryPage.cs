@@ -49,7 +49,7 @@ namespace PolygonExamples.Scripts
             catch (Exception)
             {
                 OnLog("<color=#FF0000>Create federated currency content in ContentManager " +
-                      "and set a reference in SolanaAuthExample</color>");
+                      $"and set a reference in {nameof(PolygonAuthExample)}</color>");
             }
 
             try
@@ -68,7 +68,7 @@ namespace PolygonExamples.Scripts
             catch (Exception)
             {
                 OnLog("<color=#FF0000>Create federated item content in ContentManager " +
-                      "and set a reference in SolanaAuthExample</color>");
+                      $"and set a reference in {nameof(PolygonAuthExample)}</color>");
             }
         }
 
@@ -80,9 +80,7 @@ namespace PolygonExamples.Scripts
 
         private void OnWalletExplorerClicked()
         {
-            var address =
-                $"https://explorer.solana.com/address/{Data.Instance.Account.PublicKey}?cluster=devnet";
-
+            var address = $"https://mumbai.polygonscan.com/address/{Data.Instance.WalletId}";
             Application.OpenURL(address);
         }
 

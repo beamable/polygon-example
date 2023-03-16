@@ -1,8 +1,6 @@
 ﻿using System;
 using Beamable.Common.Content;
 using Beamable.Common.Inventory;
-using Solana.Unity.SDK;
-using Solana.Unity.Wallet;
 using UnityEngine;
 
 namespace PolygonExamples.Scripts
@@ -15,7 +13,6 @@ namespace PolygonExamples.Scripts
 	{
 		public event Action OnDataChanged;
 
-		[SerializeField] private string _walletPassword = "1234";
 		[SerializeField] private Federation _federation;
 		[SerializeField] private CurrencyRef _currencyRef;
 		[SerializeField] private ItemRef _itemRef;
@@ -23,24 +20,9 @@ namespace PolygonExamples.Scripts
 		#region Auto properties
 
 		public static Data Instance { get; private set; }
-		public WalletBase Wallet { get; set; }
-		public PhantomWalletOptions WalletOptions { get; } = new() { appMetaDataUrl = "https://beamable.com" };
-
 		#endregion
 
 		#region Properties
-
-		private Account _account;
-
-		public Account Account
-		{
-			get => _account;
-			set
-			{
-				_account = value;
-				OnDataChanged?.Invoke();
-			}
-		}
 
 		private bool _working;
 
@@ -53,26 +35,13 @@ namespace PolygonExamples.Scripts
 				OnDataChanged?.Invoke();
 			}
 		}
-
-
-		private bool _walletAttached;
-
-		public bool WalletAttached
-		{
-			get => _walletAttached;
-			set
-			{
-				_walletAttached = value;
-				OnDataChanged?.Invoke();
-			}
-		}
-
+		
 		#endregion
 
 		#region Property getters
 
-		public string WalletPassword => _walletPassword;
-		public bool WalletConnected => Account != null;
+		public bool WalletConnected => !string.IsNullOrEmpty(WalletId);
+		public string WalletId { get; set; }
 		public Federation Federation => _federation;
 		public CurrencyRef CurrencyRef => _currencyRef;
 		public ItemRef ItemRef => _itemRef;
