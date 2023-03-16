@@ -18,7 +18,7 @@ namespace Beamable.Microservices.FederationMicroservice
         public static string RPCEndpoint => GetValue(nameof(RPCEndpoint), "https://rpc-mumbai.maticvigil.com/v1/5e502a11ee9bdc54143ac84efdb16b0c47bbfd8c");
         public static string DefaultContractSource => GetValue(nameof(DefaultContractSource), File.ReadAllText(DefaultERC1155Path));
         public static string DefaultContractName => GetValue(nameof(DefaultContractName), "default");
-        public static bool AllowManagedAccounts => GetValue(nameof(AllowManagedAccounts), false);
+        public static bool AllowManagedAccounts => GetValue(nameof(AllowManagedAccounts), true);
         public static int AuthenticationChallengeTtlSec => GetValue(nameof(AuthenticationChallengeTtlSec), 600);
 
         private static T GetValue<T>(string key, T defaultValue) where T : IConvertible
