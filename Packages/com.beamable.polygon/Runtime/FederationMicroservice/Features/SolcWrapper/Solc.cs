@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Beamable.Common;
+using Beamable.Microservices.FederationMicroservice.Features.SolcWrapper.Exceptions;
 using Beamable.Microservices.FederationMicroservice.Features.SolcWrapper.Models;
 using Newtonsoft.Json;
 
@@ -13,7 +15,8 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
         private static bool _initialized;
         
         private const string SolcDirectory = "Solidity/Solc";
-        private const string Executable = "solc-linux-amd64-v0.8.19+commit.7dd6d404";
+        private const string ExecutableAmd64 = "solc-linux-amd64-v0.8.19";
+        private const string ExecutableArm64 = "solc-linux-arm64-v0.8.19";
         public const int ProcessTimeoutMs = 5000;
 
         public static async Task<SolidityCompilerOutput> Compile(SolidityCompilerInput input)
@@ -29,7 +32,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
 
             try
             {
-                var outputText = await Execute(Path.Combine(SolcDirectory, Executable), $"--standard-json {inputFilePath}", SolcDirectory);
+                var outputText = await Execute(GetExecutable(), $"--standard-json {inputFilePath}", SolcDirectory);
                 var output = JsonConvert.DeserializeObject<SolidityCompilerOutput>(outputText);
                 return output!;
             }
@@ -49,15 +52,15 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
             if (!_initialized)
             {
                 BeamableLogger.Log("Adding gcompat compatibility layer package");
-                var result = await ExecuteBash("apk add gcompat");
+                await ExecuteShell("command -v apk >/dev/null 2>&1 && apk add gcompat");
                 
                 BeamableLogger.Log("Changing permissions of Solidity/Solc");
-                await ExecuteBash("chmod -R 755 /subapp/Solidity/Solc");
+                await ExecuteShell("chmod -R 755 Solidity/Solc");
                 _initialized = true;
             }
         }
 
-        private static async Task<string> ExecuteBash(string command, string workingDirectory = null)
+        private static async Task<string> ExecuteShell(string command, string workingDirectory = null)
         {
             return await Execute("/bin/sh", $"-c \"{command}\"", workingDirectory);
         }
@@ -81,12 +84,27 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
             
             var outputText = await process.StandardOutput.ReadToEndAsync();
             var outputError = await process.StandardError.ReadToEndAsync();
-            var output = $"{outputText}{outputError}";
             
             process.WaitForExit(ProcessTimeoutMs);
 
-            BeamableLogger.Log("Process output: {processOutput}", output);
-            return output;
+            if (!string.IsNullOrEmpty(outputError))
+            {
+                BeamableLogger.LogError("Process error: {processOutput}", outputError);
+                throw new SolcException(outputError);
+            }
+
+            BeamableLogger.Log("Process output: {processOutput}", outputText);
+            return outputText;
+        }
+
+        private static string GetExecutable()
+        {
+            return RuntimeInformation.ProcessArchitecture switch
+            {
+                Architecture.X64 => Path.Combine(SolcDirectory, ExecutableAmd64),
+                Architecture.Arm64 => Path.Combine(SolcDirectory, ExecutableArm64),
+                _ => throw new SolcException($"{RuntimeInformation.ProcessArchitecture} is not supported")
+            };
         }
     }
 }
