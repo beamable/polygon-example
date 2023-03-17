@@ -14,7 +14,7 @@ namespace Beamable.Microservices.PolygonFederation
 
         public static RealmConfig RealmConfig { get; internal set; }
 
-        public static string RPCEndpoint => GetValue(nameof(RPCEndpoint), "https://rpc-mumbai.maticvigil.com/v1/5e502a11ee9bdc54143ac84efdb16b0c47bbfd8c");
+        public static string RPCEndpoint => GetValue(nameof(RPCEndpoint), "https://rpc-mumbai.maticvigil.com/v1/9d02f632ba42a806ee80bd57f4e1b358c7dcddfc");
         public static bool AllowManagedAccounts => GetValue(nameof(AllowManagedAccounts), true);
         public static int AuthenticationChallengeTtlSec => GetValue(nameof(AuthenticationChallengeTtlSec), 600);
 
