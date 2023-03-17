@@ -22,7 +22,7 @@ MonoBehaviour:
     writeSelf: 0
   startingAmount: 0
   federation:
-    HasValue: 0
+    HasValue: 1
     Value:
-      Service: 
-      Namespace: 
+      Service: FederationMicroservice
+      Namespace: polygon
