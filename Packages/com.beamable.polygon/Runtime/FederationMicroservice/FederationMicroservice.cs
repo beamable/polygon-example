@@ -154,7 +154,7 @@ namespace Beamable.Microservices.FederationMicroservice
             try
             {
                 var storage = initializer.GetService<IStorageObjectConnectionProvider>();
-                var database = await storage.FederationStorageDatabase();
+                var database = await storage.PolygonStorageDatabase();
                 ServiceContext.Database = database;
                 ServiceContext.Requester = initializer.GetService<IBeamableRequester>();
 

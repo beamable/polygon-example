@@ -29,16 +29,25 @@ MonoBehaviour:
   - StorageName: FederationStorage
     StorageType: mongov1
     Enabled: 1
-    Archived: 0
+    Archived: 1
     TemplateId: small
     LocalDataPort: 12100
     LocalUIPort: 13100
     LocalInitUser: beamable
     LocalInitPass: beamable
+  - StorageName: PolygonStorage
+    StorageType: mongov1
+    Enabled: 1
+    Archived: 0
+    TemplateId: small
+    LocalDataPort: 12101
+    LocalUIPort: 13101
+    LocalInitUser: beamable
+    LocalInitPass: beamable
   ServiceCodeHandlesOnLastDomainReload:
   - ServiceName: FederationMicroservice
     CodeClass: 1
-    CodeDirectory: Assets\Beamable\Microservices\FederationMicroservice
+    CodeDirectory: Packages\com.beamable.polygon\Runtime\FederationMicroservice
     AsmDefInfo:
       Name: Beamable.Microservice.FederationMicroservice
       References:
@@ -49,8 +58,8 @@ MonoBehaviour:
       - Beamable.SmallerJSON
       - Unity.Beamable.Server.Runtime.Common
       - Unity.Beamable.Server.Runtime.Mocks
-      - Unity.Beamable.Customer.Common
-      - Beamable.Storage.FederationStorage
+      - Unity.Beamable.Polygon.Common
+      - Beamable.Storage.PolygonStorage
       DllReferences:
       - DnsClient.dll
       - MongoDB.Bson.dll
@@ -81,15 +90,15 @@ MonoBehaviour:
       - Newtonsoft.Json.dll
       - Stubble.Core.dll
       - System.Collections.Immutable.dll
-      Location: Assets/Beamable/Microservices/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
+      Location: Packages/com.beamable.polygon/Runtime/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 246FC7B25A34C2BB887992275113BA73
-  - ServiceName: FederationStorage
+    Checksum: 8D6925E64678F82D6FA38D0D74AF8CF7
+  - ServiceName: PolygonStorage
     CodeClass: 2
-    CodeDirectory: Assets\Beamable\StorageObjects\FederationStorage
+    CodeDirectory: Packages\com.beamable.polygon\Runtime\StorageObjects\PolygonStorage
     AsmDefInfo:
-      Name: Beamable.Storage.FederationStorage
+      Name: Beamable.Storage.PolygonStorage
       References:
       - Unity.Beamable.Runtime.Common
       - Unity.Beamable.Server.Runtime
@@ -98,7 +107,7 @@ MonoBehaviour:
       - Beamable.SmallerJSON
       - Unity.Beamable.Server.Runtime.Common
       - Unity.Beamable.Server.Runtime.Mocks
-      - Unity.Beamable.Customer.Common
+      - Unity.Beamable.Polygon.Common
       DllReferences:
       - DnsClient.dll
       - MongoDB.Bson.dll
@@ -108,25 +117,27 @@ MonoBehaviour:
       - System.Buffers.dll
       - System.Runtime.CompilerServices.Unsafe.dll
       - SharpCompress.dll
-      Location: Assets/Beamable/StorageObjects/FederationStorage/Beamable.Storage.FederationStorage.asmdef
+      Location: Packages/com.beamable.polygon/Runtime/StorageObjects/PolygonStorage/Beamable.Storage.PolygonStorage.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 98C2F7360D465EA955A6A66EB5D58601
-  - ServiceName: Unity.Beamable.Customer.Common
+    Checksum: AAB9ED8FCC9785EADF4370A7743E1279
+  - ServiceName: Unity.Beamable.Polygon.Common
     CodeClass: 3
-    CodeDirectory: Assets\Beamable\Common
+    CodeDirectory: Packages\com.beamable.polygon\Runtime\Common
     AsmDefInfo:
-      Name: Unity.Beamable.Customer.Common
+      Name: Unity.Beamable.Polygon.Common
       References:
       - Unity.Beamable.Runtime.Common
       - Unity.Beamable.Server.Runtime.Common
       - Unity.Beamable.Server.Runtime.Mocks
       - Beamable.SmallerJSON
+      - Unity.Beamable.Server.Runtime
+      - Unity.Beamable.Server.Runtime.Shared
       DllReferences: []
-      Location: Assets/Beamable/Common/Unity.Beamable.Customer.Common.asmdef
+      Location: Packages/com.beamable.polygon/Runtime/Common/Unity.Beamable.Polygon.Common.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 28894D4D4470C52BD1060DC2DDF2AA84
+    Checksum: 224B3DB3135B46AE6043B2111A467942
   LastBuiltDockerImagesCodeHandles:
   - ServiceName: FederationMicroservice
     CodeClass: 1

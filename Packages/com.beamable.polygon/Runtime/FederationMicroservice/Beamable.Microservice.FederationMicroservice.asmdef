@@ -1,8 +1,8 @@
 {
-  "name": "Beamable.Microservice.FederationMicroservice",
-  "rootNamespace": "",
-  "references": [
-    "Unity.Beamable.Runtime.Common",
+   "name":"Beamable.Microservice.FederationMicroservice",
+  "rootNamespace":"",
+  "references":[
+     "Unity.Beamable.Runtime.Common",
     "Unity.Beamable.Server.Runtime",
     "Unity.Beamable.Server.Runtime.Shared",
     "Unity.Beamable",
@@ -10,23 +10,18 @@
     "Unity.Beamable.Server.Runtime.Common",
     "Unity.Beamable.Server.Runtime.Mocks",
     "Unity.Beamable.Polygon.Common",
-    "Beamable.Storage.FederationStorage"
+    "Beamable.Storage.PolygonStorage"
   ],
-  "includePlatforms": [
-    "Editor"
+  "includePlatforms":[
+     "Editor"
   ],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": true,
-  "precompiledReferences": [
-    "DnsClient.dll",
-    "MongoDB.Bson.dll",
-    "MongoDB.Driver.Core.dll",
-    "MongoDB.Driver.dll",
-    "MongoDB.Libmongocrypt.dll",
-    "System.Runtime.CompilerServices.Unsafe.dll",
-    "SharpCompress.dll",
-    "Nethereum.Web3.dll",
+  "excludePlatforms":[
+     
+  ],
+  "allowUnsafeCode":false,
+  "overrideReferences":true,
+  "precompiledReferences":[
+     "Nethereum.Web3.dll",
     "Nethereum.JsonRpc.Client.dll",
     "Nethereum.Contracts.dll",
     "Microsoft.Extensions.Logging.Abstractions.dll",
@@ -44,13 +39,24 @@
     "Nethereum.Signer.EIP712.dll",
     "Nethereum.KeyStore.dll",
     "Nethereum.JsonRpc.RpcClient.dll",
-    "System.Buffers.dll",
     "Newtonsoft.Json.dll",
     "Stubble.Core.dll",
-    "System.Collections.Immutable.dll"
+    "System.Collections.Immutable.dll",
+    "DnsClient.dll",
+    "MongoDB.Bson.dll",
+    "MongoDB.Driver.Core.dll",
+    "MongoDB.Driver.dll",
+    "MongoDB.Libmongocrypt.dll",
+    "System.Buffers.dll",
+    "System.Runtime.CompilerServices.Unsafe.dll",
+    "SharpCompress.dll"
   ],
-  "autoReferenced": false,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+  "autoReferenced":false,
+  "defineConstraints":[
+     
+  ],
+  "versionDefines":[
+     
+  ],
+  "noEngineReferences":false
 }
