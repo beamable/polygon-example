@@ -58,16 +58,25 @@ This sample project includes one Polygon federated item - BeamSword, and one Pol
 You can enable federation on any item or currency.
 
 ## Try it out
-1. Sign up for a custom Mumbai Testnet RPC URI at https://rpc.maticvigil.com/
-2. Set your RPC URI as a realm config value "RPCEndpoint" (see Configuration)
-3. Publish the **PolygonFederation** microservice along with the **PolygonStorage** microstorage.
-4. Open the Portal an wait for the microservice to get into the **running** state.
-5. Explore the microservice logs and microstorage data. Microservice should create and store your developer wallet on first run.
-6. Use a [Polygon Faucet App](https://faucet.polygon.technology/) to request some test MATIC tokens for your developer wallet.
-7. Start the SampleScene from this repo. It will create a Beamable player account on your realm.
-8. Click "Attach Identity" - this should create a wallet for the player and associate it with the players account.
-9. Press the tilde key to enter the "Admin console" and type the `portal` command. This will open the player overview page in the Beamable Portal.
-10. Use the Inventory feature to grant some federated items to the player. Granting items will mint new NFTs, and granting currency will transfer fungible tokens to the players wallet.
+* Generate an RPC Endpoint for the Mumbai Testnet
+  * Register at https://rpc.maticvigil.com/
+  * Create an App
+  * Copy the Mumbai Testnet RPC URL from within the App
+  * Note: This is important to avoid RPC rate limiting.
+* Set your RPC URI as a realm config value "RPCEndpoint" (see Configuration)
+* Publish the **PolygonFederation** microservice along with the **PolygonStorage** microstorage.
+* Open the Portal an wait for the microservice to get into the **running** state.
+* Explore the microservice logs and microstorage data. Microservice should create and store your developer wallet on first run.
+* Use a [Polygon Faucet App](https://faucet.polygon.technology/) to request some test MATIC tokens for your developer wallet.
+  * To find your Developer wallet address visit the Beamable Portal under Operate > Microservices
+  * Click "Explore Data" to open the Mongo Express data tool
+  * Select the PolygonStorage database
+  * Click "View" on the "vault" collection
+  * Copy the "Address" field on the "default-account" document. This is your developer wallet address
+* Start the SampleScene from this repo. It will create a Beamable player account on your realm.
+* Click "Attach Identity" - this should create a wallet for the player and associate it with the players account.
+* Press the tilde key to enter the "Admin console" and type the `portal` command. This will open the player overview page in the Beamable Portal.
+* Use the Portal Player Inventory section to grant some federated items to the player. Granting items will mint new NFTs, and granting currency will transfer fungible tokens to the players wallet.
 
 NOTE: First request to the microservice will initiate the compile and deploy procedure for the smart contract. Depending on your RPC endpoint, it may result in a timeout. Be sure to check the microservice logs.
 
