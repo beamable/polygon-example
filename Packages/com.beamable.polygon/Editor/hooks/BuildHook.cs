@@ -1,12 +1,12 @@
 using Beamable.Common.Dependencies;
-using Beamable.Microservices.FederationMicroservice;
+using Beamable.Microservices.PolygonFederation;
 using Beamable.Server.Editor;
 
 namespace Beamable.Editor.Polygon.Hooks
 {
-    public class FederationMicroserviceBuildHook : IMicroserviceBuildHook<FederationMicroservice>
+    public class PolygonFederationBuildHook : IMicroserviceBuildHook<PolygonFederation>
     {
-        const string SourceBasePath = "Packages/com.beamable.polygon/Runtime/FederationMicroservice";
+        const string SourceBasePath = "Packages/com.beamable.polygon/Runtime/PolygonFederation";
         
         public void Execute(IMicroserviceBuildContext ctx)
         {
@@ -20,7 +20,7 @@ namespace Beamable.Editor.Polygon.Hooks
         [RegisterBeamableDependencies(-1, RegistrationOrigin.EDITOR)]
         public static void Register(IDependencyBuilder builder)
         {
-            builder.AddSingleton<IMicroserviceBuildHook<FederationMicroservice>, FederationMicroserviceBuildHook>();
+            builder.AddSingleton<IMicroserviceBuildHook<PolygonFederation>, PolygonFederationBuildHook>();
         }
     }
 }

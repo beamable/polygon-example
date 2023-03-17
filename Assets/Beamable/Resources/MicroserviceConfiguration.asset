@@ -13,16 +13,28 @@ MonoBehaviour:
   m_Name: MicroserviceConfiguration
   m_EditorClassIdentifier: 
   Microservices:
-  - ServiceName: FederationMicroservice
+  - ServiceName: PolygonFederation
     Enabled: 1
     Archived: 0
     TemplateId: small
     CustomDockerFileStrings: 
-    IncludeDebugTools: 1
+    IncludeDebugTools: 0
     DebugData:
       Username: root
       Password: Password!
-      SshPort: 11100
+      SshPort: 11101
+    LastBuiltCheckSum: 
+    RobotId: 
+  - ServiceName: FederationMicroservice
+    Enabled: 1
+    Archived: 1
+    TemplateId: small
+    CustomDockerFileStrings: 
+    IncludeDebugTools: 0
+    DebugData:
+      Username: root
+      Password: Password!
+      SshPort: 11101
     LastBuiltCheckSum: 
     RobotId: 
   StorageObjects:
@@ -45,11 +57,11 @@ MonoBehaviour:
     LocalInitUser: beamable
     LocalInitPass: beamable
   ServiceCodeHandlesOnLastDomainReload:
-  - ServiceName: FederationMicroservice
+  - ServiceName: PolygonFederation
     CodeClass: 1
-    CodeDirectory: Packages\com.beamable.polygon\Runtime\FederationMicroservice
+    CodeDirectory: Packages\com.beamable.polygon\Runtime\PolygonFederation
     AsmDefInfo:
-      Name: Beamable.Microservice.FederationMicroservice
+      Name: Beamable.Microservice.PolygonFederation
       References:
       - Unity.Beamable.Runtime.Common
       - Unity.Beamable.Server.Runtime
@@ -61,13 +73,6 @@ MonoBehaviour:
       - Unity.Beamable.Polygon.Common
       - Beamable.Storage.PolygonStorage
       DllReferences:
-      - DnsClient.dll
-      - MongoDB.Bson.dll
-      - MongoDB.Driver.Core.dll
-      - MongoDB.Driver.dll
-      - MongoDB.Libmongocrypt.dll
-      - System.Runtime.CompilerServices.Unsafe.dll
-      - SharpCompress.dll
       - Nethereum.Web3.dll
       - Nethereum.JsonRpc.Client.dll
       - Nethereum.Contracts.dll
@@ -86,14 +91,21 @@ MonoBehaviour:
       - Nethereum.Signer.EIP712.dll
       - Nethereum.KeyStore.dll
       - Nethereum.JsonRpc.RpcClient.dll
-      - System.Buffers.dll
       - Newtonsoft.Json.dll
       - Stubble.Core.dll
       - System.Collections.Immutable.dll
-      Location: Packages/com.beamable.polygon/Runtime/FederationMicroservice/Beamable.Microservice.FederationMicroservice.asmdef
+      - DnsClient.dll
+      - MongoDB.Bson.dll
+      - MongoDB.Driver.Core.dll
+      - MongoDB.Driver.dll
+      - MongoDB.Libmongocrypt.dll
+      - System.Buffers.dll
+      - System.Runtime.CompilerServices.Unsafe.dll
+      - SharpCompress.dll
+      Location: Packages/com.beamable.polygon/Runtime/PolygonFederation/Beamable.Microservice.PolygonFederation.asmdef
       IncludePlatforms: []
       AutoReferenced: 0
-    Checksum: 8D6925E64678F82D6FA38D0D74AF8CF7
+    Checksum: 0DC70E0780E1A92D6A1DAA035DA4B384
   - ServiceName: PolygonStorage
     CodeClass: 2
     CodeDirectory: Packages\com.beamable.polygon\Runtime\StorageObjects\PolygonStorage

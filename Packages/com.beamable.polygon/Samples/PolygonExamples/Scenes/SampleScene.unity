@@ -3414,7 +3414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _federation:
-    Service: FederationMicroservice
+    Service: PolygonFederation
     Namespace: polygon
   _currencyRef:
     Id: currency.coins

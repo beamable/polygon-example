@@ -88,7 +88,7 @@ namespace PolygonExamples.Scripts
 
                 var emptyToken = "";
                 RegistrationResult result =
-                    await Ctx.Accounts.AddExternalIdentity<PolygonCloudIdentity, FederationMicroserviceClient>(emptyToken);
+                    await Ctx.Accounts.AddExternalIdentity<PolygonCloudIdentity, PolygonFederationClient>(emptyToken);
 
                 var publicKey = result.account.ExternalIdentities[0].userId; // aka- walletId
                 
@@ -105,7 +105,7 @@ namespace PolygonExamples.Scripts
         {
             Data.Instance.Working = true;
             OnLog("Detaching wallet...");
-            await Ctx.Accounts.RemoveExternalIdentity<PolygonCloudIdentity, FederationMicroserviceClient>();
+            await Ctx.Accounts.RemoveExternalIdentity<PolygonCloudIdentity, PolygonFederationClient>();
             
             if (!CheckIfWalletHasAttachedIdentity())
             {
