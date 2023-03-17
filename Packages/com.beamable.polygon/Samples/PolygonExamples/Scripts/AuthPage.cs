@@ -24,6 +24,7 @@ namespace PolygonExamples.Scripts
         [SerializeField] private Button _attachIdentityButton;
         [SerializeField] private Button _detachIdentityButton;
         [SerializeField] private Button _getExternalIdentitiesButton;
+        [SerializeField] private Button _walletExplorerButton;
 
         [SerializeField] private TextMeshProUGUI _beamId;
         [SerializeField] private TextMeshProUGUI _walletId;
@@ -35,6 +36,8 @@ namespace PolygonExamples.Scripts
             
             _attachIdentityButton.onClick.AddListener(OnAttachClicked);
             _detachIdentityButton.onClick.AddListener(OnDetachClicked);
+            _walletExplorerButton.onClick.AddListener(OnWalletExplorerClicked);
+
             _getExternalIdentitiesButton.onClick.AddListener(OnGetExternalClicked);
 
             _authService = Ctx.Api.AuthService;
@@ -53,6 +56,7 @@ namespace PolygonExamples.Scripts
 
         public override void OnRefresh()
         {
+            _walletExplorerButton.interactable = Ctx.GetExampleData().WalletConnected;
             _attachIdentityButton.interactable = !Ctx.GetExampleData().Working && !Ctx.GetExampleData().WalletConnected;
             _detachIdentityButton.interactable = !Ctx.GetExampleData().Working && Ctx.GetExampleData().WalletConnected;
             _getExternalIdentitiesButton.interactable = !Ctx.GetExampleData().Working;
@@ -66,6 +70,11 @@ namespace PolygonExamples.Scripts
                 : String.Empty;
         }
 
+        private void OnWalletExplorerClicked()
+        {
+            var address = $"https://mumbai.polygonscan.com/address/{Ctx.GetExampleData().WalletId}";
+            Application.OpenURL(address);
+        }
 
         private async void OnAttachClicked()
         {

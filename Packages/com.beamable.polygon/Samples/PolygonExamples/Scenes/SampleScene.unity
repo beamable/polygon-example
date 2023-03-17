@@ -1547,7 +1547,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1283769944}
   m_HandleRect: {fileID: 1283769943}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1624,8 +1624,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1642626234}
-  m_Father: {fileID: 947557134}
-  m_RootOrder: 0
+  m_Father: {fileID: 1749906204}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1998,7 +1998,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _page: inventory
-  _walletExplorerButton: {fileID: 582532683}
   _getInventoryButton: {fileID: 1482034832}
   _itemPresenter: {fileID: 4453428598978878016, guid: 886d95d387f2ee54aa22b02383f88f2f, type: 3}
   _itemsParent: {fileID: 773582394}
@@ -2327,7 +2326,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 582532681}
   - {fileID: 1482034830}
   m_Father: {fileID: 699134075}
   m_RootOrder: 0
@@ -2824,6 +2822,7 @@ MonoBehaviour:
   _attachIdentityButton: {fileID: 338651515}
   _detachIdentityButton: {fileID: 385446511}
   _getExternalIdentitiesButton: {fileID: 1866165355}
+  _walletExplorerButton: {fileID: 582532683}
   _beamId: {fileID: 185117681}
   _walletId: {fileID: 79999278}
 --- !u!1 &1283769942
@@ -2936,7 +2935,7 @@ RectTransform:
   m_Children:
   - {fileID: 93583732}
   m_Father: {fileID: 947557134}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3452,6 +3451,7 @@ RectTransform:
   - {fileID: 338651514}
   - {fileID: 385446510}
   - {fileID: 1866165354}
+  - {fileID: 582532681}
   m_Father: {fileID: 1266413791}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

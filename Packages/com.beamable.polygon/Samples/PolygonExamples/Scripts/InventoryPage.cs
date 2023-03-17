@@ -15,7 +15,6 @@ namespace PolygonExamples.Scripts
     /// </summary>
     public class InventoryPage : TabPage
     {
-        [SerializeField] private Button _walletExplorerButton;
         [SerializeField] private Button _getInventoryButton;
 
         [SerializeField] private ItemPresenter _itemPresenter;
@@ -25,7 +24,6 @@ namespace PolygonExamples.Scripts
 
         private void Start()
         {
-            _walletExplorerButton.onClick.AddListener(OnWalletExplorerClicked);
             _getInventoryButton.onClick.AddListener(OnGetInventoryClicked);
 
             DownloadSprites();
@@ -76,15 +74,10 @@ namespace PolygonExamples.Scripts
 
         public override void OnRefresh()
         {
-            _walletExplorerButton.interactable = Ctx.GetExampleData().WalletConnected;
             _getInventoryButton.interactable = !Ctx.GetExampleData().Working;
         }
 
-        private void OnWalletExplorerClicked()
-        {
-            var address = $"https://mumbai.polygonscan.com/address/{Ctx.GetExampleData().WalletId}";
-            Application.OpenURL(address);
-        }
+
 
         private async void OnGetInventoryClicked()
         {
