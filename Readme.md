@@ -15,7 +15,7 @@ You should have the following tools installed on your development machine.
 4. [Git](https://git-scm.com/downloads)
 
 Please sing up for a private Polygon RPC API [Matic Vigil](https://rpc.maticvigil.com/) for
-your development environment. This project defaults to the [Mumbai Testnet(https://mumbai.polygonscan.com/) and uses a shared RPC endpoint
+your development environment. This project defaults to the [Mumbai Testnet](https://mumbai.polygonscan.com/) and uses a shared RPC endpoint
 which my be a rate limited.
 
 ## ERC1155
