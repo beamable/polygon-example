@@ -70,7 +70,7 @@ You can enable federation on any item or currency.
 NOTE: First request to the microservice will initiate the compile and deploy procedure for the smart contract. Depending on your RPC endpoint, it may result in a timeout. Be sure to check the microservice logs.
 
 ## NFT metadata
-We're using our existing Content System backed by AWS S3 and AWS CloudFront CDN. Every property you specify in the Inventory `CreateItemRequest` will become a NFT metadata property.
+We're using our existing Content System backed by AWS S3 and AWS CloudFront CDN for storing NFT metadata. Every property you specify in the Inventory `CreateItemRequest` will become a NFT metadata property.
 To specify a root level metadata properties, like "image" and "description", you just prefix the property name with a "$" character.
 Example `CreateItemRequest`:
 ```json
