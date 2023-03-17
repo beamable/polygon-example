@@ -71,7 +71,7 @@ NOTE: First request to the microservice will initiate the compile and deploy pro
 
 ## NFT metadata
 We're using our existing Content System backed by AWS S3 and AWS CloudFront CDN for storing NFT metadata. Every property you specify in the Inventory `CreateItemRequest` will become a NFT metadata property.
-To specify a root level metadata properties, like "image" and "description", you just prefix the property name with a "$" character.
+To specify a root level metadata property, like "image" and "description", you just prefix the property name with a '$' character.  
 Example `CreateItemRequest`:
 ```json
 {
