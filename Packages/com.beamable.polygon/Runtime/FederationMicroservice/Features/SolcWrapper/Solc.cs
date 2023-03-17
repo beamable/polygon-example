@@ -39,7 +39,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.SolcWrapper
             catch (Exception e)
             {
                 BeamableLogger.LogError(e);
-                throw;
+                throw new SolcException(e.Message);
             }
             finally
             {
