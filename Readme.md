@@ -47,7 +47,7 @@ and add a part of this repository as an external package.
 In the Unity Package Manager, [add a package via git-link](https://docs.unity3d.com/Manual/upm-ui-giturl.html).
 for `com.beamable.polygon` and use the following git-link.
 ```shell
-https://github.com/beamable/polygon-example.git?path=/Packages/com.beamable.polygon#0.0.0
+https://github.com/beamable/polygon-example.git?path=/Packages/com.beamable.polygon#0.0.1
 ```
 
 Note: the end of the link includes the version number. You view the available versions by looking
