@@ -5,7 +5,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Excep
 {
     internal class ContractNotLoadedException : MicroserviceException
     {
-        public ContractNotLoadedException(string message) : base((int)HttpStatusCode.InternalServerError, "ContractNotLoadedError", message)
+        public ContractNotLoadedException(string message) : base((int)HttpStatusCode.BadRequest, "ContractNotLoadedError", message)
         {
         }
     }

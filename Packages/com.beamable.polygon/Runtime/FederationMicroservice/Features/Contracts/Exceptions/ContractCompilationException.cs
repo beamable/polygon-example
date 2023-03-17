@@ -8,7 +8,7 @@ namespace Beamable.Microservices.FederationMicroservice.Features.Contracts.Excep
 {
     internal class ContractCompilationException : MicroserviceException
     {
-        public ContractCompilationException(IEnumerable<SolidityCompilerOutput.OutputError> errors) : base((int)HttpStatusCode.InternalServerError, "ContractCompilationError",
+        public ContractCompilationException(IEnumerable<SolidityCompilerOutput.OutputError> errors) : base((int)HttpStatusCode.BadRequest, "ContractCompilationError",
             $"Compile errors: {string.Join(",", errors.Select(x => x.Message).ToList())}")
         {
         }
