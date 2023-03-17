@@ -54,7 +54,7 @@ Note: the end of the link includes the version number. You view the available ve
 at this repositories git tags.
 
 ## Federated content
-This sample project includes one Polygon federated item - BeamSword, and one Polygon federated currency - BeamCoin. You can enable federation
+This sample project includes one Polygon federated item - BeamSword, and one Polygon federated currency - BeamCoin.
 You can enable federation on any item or currency.
 
 ## Try it out
