@@ -62,7 +62,7 @@ You can enable federation on any item or currency.
 2. Open the Portal an wait for the microservice to get into the **running** state.
 3. Explore the microservice logs and microstorage data. Microservice should create and store your developer wallet on first run.
 4. Use a [Polygon Faucet App](https://faucet.polygon.technology/) to request some test MATIC tokens for your developer wallet.
-5. Start a SampleScene from this repo. It will create a Beamable player account on your realm.
+5. Start the SampleScene from this repo. It will create a Beamable player account on your realm.
 6. Click "Attach Identity" - this should create a wallet for the player and associate it with the players account.
 7. Press the tilde key to enter the "Admin console" and type the `portal` command. This will open the player overview page in the Beamable Portal.
 8. Use the Inventory feature to grant some federated items to the player. Granting items will mint new NFTs, and granting currency will transfer fungible tokens to the players wallet.
@@ -70,7 +70,7 @@ You can enable federation on any item or currency.
 NOTE: First request to the microservice will initiate the compile and deploy procedure for the smart contract. Depending on your RPC endpoint, it may result in a timeout. Be sure to check the microservice logs.
 
 ## NFT metadata
-We're using our existing Content System that backed by AWS S3 and AWS CloudFront CDN. Every property you specify in the Inventory `CreateItemRequest` will become a NFT metadata property.
+We're using our existing Content System backed by AWS S3 and AWS CloudFront CDN. Every property you specify in the Inventory `CreateItemRequest` will become a NFT metadata property.
 To specify a root level metadata properties, like "image" and "description", you just prefix the property name with a "$" character.
 Example `CreateItemRequest`:
 ```json
