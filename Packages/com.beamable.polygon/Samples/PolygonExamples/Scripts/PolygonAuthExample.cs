@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Beamable;
 using TMPro;
 using UnityEngine;
 
@@ -9,13 +10,14 @@ namespace PolygonExamples.Scripts
 		[SerializeField] private List<TabPage> _pages;
 		[SerializeField] private Transform _logsParent;
 
-		private void Awake()
+		private async void Awake()
 		{
+			var ctx = await BeamContext.Default.Instance;
 			OnTabButtonClicked("auth");
 
 			foreach (TabPage tabPage in _pages)
 			{
-				Data.Instance.OnDataChanged += tabPage.OnRefresh;
+				ctx.GetExampleData().OnDataChanged += tabPage.OnRefresh;
 				tabPage.OnLog = Log;
 			}
 		}

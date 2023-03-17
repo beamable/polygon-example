@@ -32,6 +32,7 @@ namespace PolygonExamples.Scripts
 
         private async void Start()
         {
+            
             _attachIdentityButton.onClick.AddListener(OnAttachClicked);
             _detachIdentityButton.onClick.AddListener(OnDetachClicked);
             _getExternalIdentitiesButton.onClick.AddListener(OnGetExternalClicked);
@@ -42,9 +43,9 @@ namespace PolygonExamples.Scripts
             await BeamContext.Default.Accounts.OnReady;
 
             var external = BeamContext.Default.Accounts.Current.ExternalIdentities.FirstOrDefault(ext =>
-                ext.providerNamespace == Data.Instance.Federation.Namespace
-                && ext.providerService == Data.Instance.Federation.Service);
-            Data.Instance.WalletId = external?.userId ?? null;
+                ext.providerNamespace == Ctx.GetExampleData().Federation.Namespace
+                && ext.providerService == Ctx.GetExampleData().Federation.Service);
+            Ctx.GetExampleData().WalletId = external?.userId ?? null;
             
             _beamId.text = $"<b>Beam ID</b> {Ctx.Accounts.Current.GamerTag.ToString()}";
             OnRefresh();
@@ -52,33 +53,33 @@ namespace PolygonExamples.Scripts
 
         public override void OnRefresh()
         {
-            _attachIdentityButton.interactable = !Data.Instance.Working && !Data.Instance.WalletConnected;
-            _detachIdentityButton.interactable = !Data.Instance.Working && Data.Instance.WalletConnected;
-            _getExternalIdentitiesButton.interactable = !Data.Instance.Working;
+            _attachIdentityButton.interactable = !Ctx.GetExampleData().Working && !Ctx.GetExampleData().WalletConnected;
+            _detachIdentityButton.interactable = !Ctx.GetExampleData().Working && Ctx.GetExampleData().WalletConnected;
+            _getExternalIdentitiesButton.interactable = !Ctx.GetExampleData().Working;
             UpdateWalletIdText();
         }
 
         void UpdateWalletIdText()
         {
-            _walletId.text = Data.Instance.WalletConnected
-                ? $"<b>Wallet Id</b> {Data.Instance.WalletId}"
+            _walletId.text = Ctx.GetExampleData().WalletConnected
+                ? $"<b>Wallet Id</b> {Ctx.GetExampleData().WalletId}"
                 : String.Empty;
         }
 
 
         private async void OnAttachClicked()
         {
-            Data.Instance.Working = true;
+            Ctx.GetExampleData().Working = true;
             OnLog("Attaching wallet...");
             await SendAttachRequest();
             CheckIfWalletHasAttachedIdentity();
-            Data.Instance.Working = false;
+            Ctx.GetExampleData().Working = false;
 
             async Promise SendAttachRequest(ChallengeSolution challengeSolution = null)
             {
                 StringBuilder builder = new();
                 builder.AppendLine("Sending a request with:");
-                builder.AppendLine($"Provider service: {Data.Instance.Federation.Service}");
+                builder.AppendLine($"Provider service: {Ctx.GetExampleData().Federation.Service}");
                 if (challengeSolution != null)
                 {
                     builder.AppendLine($"Signed solution: {challengeSolution.solution}");
@@ -94,7 +95,7 @@ namespace PolygonExamples.Scripts
                 
                 if (result.isSuccess)
                 {
-                    Data.Instance.WalletId = publicKey;
+                    Ctx.GetExampleData().WalletId = publicKey;
 
                     OnLog($"Succesfully attached an external identity... publicKey=[{publicKey}]");
                 }
@@ -103,7 +104,7 @@ namespace PolygonExamples.Scripts
 
         private async void OnDetachClicked()
         {
-            Data.Instance.Working = true;
+            Ctx.GetExampleData().Working = true;
             OnLog("Detaching wallet...");
             await Ctx.Accounts.RemoveExternalIdentity<PolygonCloudIdentity, PolygonFederationClient>();
             
@@ -112,9 +113,9 @@ namespace PolygonExamples.Scripts
                 OnLog("Succesfully detached an external identity...");
             }
 
-            Data.Instance.WalletId = null;
+            Ctx.GetExampleData().WalletId = null;
 
-            Data.Instance.Working = false;
+            Ctx.GetExampleData().Working = false;
             OnRefresh();
         }
 
@@ -155,9 +156,9 @@ namespace PolygonExamples.Scripts
                 return false;
 
             ExternalIdentity externalIdentity = Ctx.Accounts.Current.ExternalIdentities.FirstOrDefault(i =>
-                i.providerNamespace == Data.Instance.Federation.Namespace &&
-                i.providerService == Data.Instance.Federation.Service &&
-                i.userId == Data.Instance.WalletId);
+                i.providerNamespace == Ctx.GetExampleData().Federation.Namespace &&
+                i.providerService == Ctx.GetExampleData().Federation.Service &&
+                i.userId == Ctx.GetExampleData().WalletId);
 
             return externalIdentity != null;
         }

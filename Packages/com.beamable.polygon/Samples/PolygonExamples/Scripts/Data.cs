@@ -16,12 +16,7 @@ namespace PolygonExamples.Scripts
 		[SerializeField] private Federation _federation;
 		[SerializeField] private CurrencyRef _currencyRef;
 		[SerializeField] private ItemRef _itemRef;
-
-		#region Auto properties
-
-		public static Data Instance { get; private set; }
-		#endregion
-
+		
 		#region Properties
 
 		private bool _working;
@@ -47,18 +42,6 @@ namespace PolygonExamples.Scripts
 		public ItemRef ItemRef => _itemRef;
 		
 		#endregion
-
-		private void Awake()
-		{
-			if (Instance != null && Instance != this)
-			{
-				Destroy(this);
-			}
-			else
-			{
-				Instance = this;
-			}
-		}
 
 		private void Start()
 		{

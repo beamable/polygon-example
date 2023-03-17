@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Beamable;
 using Beamable.Common.Api.Inventory;
 using Beamable.Common.Inventory;
+using Beamable.UI.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,18 +33,18 @@ namespace PolygonExamples.Scripts
 
         private async void DownloadSprites()
         {
-            Data.Instance.Working = true;
+            Ctx.GetExampleData().Working = true;
 
             try
             {
-                CurrencyContent currencyContent = await Data.Instance.CurrencyRef.Resolve();
+                CurrencyContent currencyContent = await Ctx.GetExampleData().CurrencyRef.Resolve();
                 currencyContent.icon.LoadAssetAsync<Sprite>().Completed += handle =>
                 {
                     _cachedSprites.Add(currencyContent.Id, handle.Result);
 
                     if (_cachedSprites.Count == 2)
                     {
-                        Data.Instance.Working = false;
+                        Ctx.GetExampleData().Working = false;
                     }
                 };
             }
@@ -54,14 +56,14 @@ namespace PolygonExamples.Scripts
 
             try
             {
-                ItemContent itemContent = await Data.Instance.ItemRef.Resolve();
+                ItemContent itemContent = await Ctx.GetExampleData().ItemRef.Resolve();
                 itemContent.icon.LoadAssetAsync<Sprite>().Completed += handle =>
                 {
                     _cachedSprites.Add(itemContent.Id, handle.Result);
 
                     if (_cachedSprites.Count == 2)
                     {
-                        Data.Instance.Working = false;
+                        Ctx.GetExampleData().Working = false;
                     }
                 };
             }
@@ -74,19 +76,19 @@ namespace PolygonExamples.Scripts
 
         public override void OnRefresh()
         {
-            _walletExplorerButton.interactable = Data.Instance.WalletConnected;
-            _getInventoryButton.interactable = !Data.Instance.Working;
+            _walletExplorerButton.interactable = Ctx.GetExampleData().WalletConnected;
+            _getInventoryButton.interactable = !Ctx.GetExampleData().Working;
         }
 
         private void OnWalletExplorerClicked()
         {
-            var address = $"https://mumbai.polygonscan.com/address/{Data.Instance.WalletId}";
+            var address = $"https://mumbai.polygonscan.com/address/{Ctx.GetExampleData().WalletId}";
             Application.OpenURL(address);
         }
 
         private async void OnGetInventoryClicked()
         {
-            Data.Instance.Working = true;
+            Ctx.GetExampleData().Working = true;
 
             ClearItems();
 
@@ -114,7 +116,7 @@ namespace PolygonExamples.Scripts
                 }
             }
 
-            Data.Instance.Working = false;
+            Ctx.GetExampleData().Working = false;
 
             void ParseItems(Dictionary<string, List<ItemView>> items)
             {

@@ -24,5 +24,5 @@ MonoBehaviour:
   federation:
     HasValue: 1
     Value:
-      Service: FederationMicroservice
+      Service: PolygonFederation
       Namespace: polygon
