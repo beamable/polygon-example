@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Beamable.Common;
+using Beamable.Microservices.PolygonFederation.Features.Contracts;
 using Beamable.Microservices.PolygonFederation.Features.Contracts.Functions.Models;
 using Beamable.Microservices.PolygonFederation.Features.Minting.Storage;
 using Beamable.Microservices.PolygonFederation.Features.Minting.Storage.Models;
@@ -21,7 +22,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting
                 .Select(x => x.ContentId)
                 .ToHashSet();
 
-            var existingMints = (await db.GetTokenMappingsForContent(Configuration.DefaultContractName, nonUniqueContentIds))
+            var existingMints = (await db.GetTokenMappingsForContent(ContractService.DefaultContractName, nonUniqueContentIds))
                 .ToDictionary(x => x.ContentId, x => x);
 
             var tokenIds = new List<BigInteger>();
@@ -36,7 +37,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting
                 var tokenId = maybeExistingMint switch
                 {
                     { } m => m.TokenId,
-                    _ => await db.GetNextCounterValue(Configuration.DefaultContractName)
+                    _ => await db.GetNextCounterValue(ContractService.DefaultContractName)
                 };
                 var metadataHash = request.IsUnique ? await SaveMetadata(request) : "";
 
@@ -47,7 +48,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting
                 mints.Add(new Mint
                 {
                     ContentId = request.ContentId,
-                    ContractName = Configuration.DefaultContractName,
+                    ContractName = ContractService.DefaultContractName,
                     TokenId = tokenId
                 });
                 BeamableLogger.Log("Generated mint: {@mint}", new { request.ContentId, request.Amount, request.Properties, request.IsUnique, TokenId = tokenId, MetadataHash = metadataHash });

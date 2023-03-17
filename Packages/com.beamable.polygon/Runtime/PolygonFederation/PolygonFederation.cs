@@ -105,7 +105,7 @@ namespace Beamable.Microservices.PolygonFederation
                         Account = id
                     });
 
-            var existingMints = (await ServiceContext.Database.GetTokenMappingsForTokens(Configuration.DefaultContractName, inventoryResponse.TokenIds))
+            var existingMints = (await ServiceContext.Database.GetTokenMappingsForTokens(ContractService.DefaultContractName, inventoryResponse.TokenIds))
                 .ToDictionary(x => x.TokenId, x => x);
 
             var currencies = new Dictionary<string, long>();
@@ -137,15 +137,6 @@ namespace Beamable.Microservices.PolygonFederation
                 currencies = currencies,
                 items = itemGroups
             };
-        }
-
-        [AdminOnlyCallable]
-        public IList<string> Test(string path)
-        {
-            var files = Directory.EnumerateFiles(path).Select(x => $"FILE: {x}").ToList();
-            var directories = Directory.EnumerateDirectories(path).Select(x => $"DIR: {x}").ToList();
-
-            return files.Union(directories).ToList();
         }
 
         [InitializeServices]
@@ -183,13 +174,13 @@ namespace Beamable.Microservices.PolygonFederation
                 try
                 {
                     // Load the default contract
-                    var defaultContract = await ContractService.GetOrCreateContract(Configuration.DefaultContractName, Configuration.DefaultContractSource);
+                    var defaultContract = await ContractService.GetOrCreateDefaultContract();
                     ServiceContext.DefaultContract = defaultContract;
                 }
                 catch (Exception ex)
                 {
                     BeamableLogger.LogException(ex);
-                    throw new ContractNotLoadedException($"Contract {Configuration.DefaultContractName} can't be loaded. Please fix the issues and try again.");
+                    throw new ContractNotLoadedException("Default contract can't be loaded. Please fix the issues and try again.");
                 }
             }
         }

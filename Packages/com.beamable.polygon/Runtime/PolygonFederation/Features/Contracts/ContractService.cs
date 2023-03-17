@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Beamable.Common;
@@ -18,6 +19,13 @@ namespace Beamable.Microservices.PolygonFederation.Features.Contracts
     {
         private static readonly ConcurrentDictionary<string, Contract> ContractCache = new();
 
+        private const string DefaultErc1155Path = "Solidity/Contracts/DefaultERC1155.sol";
+        private static readonly string DefaultContractSource = File.ReadAllText(DefaultErc1155Path);
+        
+        public const string DefaultContractName = "default";
+
+        public static async ValueTask<Contract> GetOrCreateDefaultContract() => await GetOrCreateContract(DefaultContractName, DefaultContractSource);
+        
         public static async ValueTask<Contract> GetOrCreateContract(string name, string sourceCode)
         {
             var contract = ContractCache.GetOrAdd(name, await CompileAndSaveContract(name, sourceCode));
