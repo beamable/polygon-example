@@ -17,36 +17,56 @@ namespace Beamable.Microservices.PolygonFederation.Features.Accounts
 
         public static async Task<Account> GetOrCreateAccount(string accountName)
         {
-            var db = ServiceContext.Database;
-            var maybeExistingAccount = (await db.GetValutByName(accountName))?.ToAccount();
-            if (maybeExistingAccount is not null) return maybeExistingAccount;
-
-            var ecKey = EthECKey.GenerateKey();
-            var privateKeyBytes = ecKey.GetPrivateKeyAsBytes();
-            var newAccount = new Account(privateKeyBytes);
-
-            var insertSuccessful = await db.TryInsertValut(new Vault
+            var account = await GetAccount(accountName);
+            if (account is null)
             {
-                Name = accountName,
-                Value = KeystoreService.EncryptAndGenerateKeyStore(Configuration.RealmSecret, privateKeyBytes, newAccount.Address)
-            });
-
-            if (insertSuccessful)
-            {
-                BeamableLogger.Log("Saved account {accountName} -> {accountAddress}", accountName, newAccount.Address);
-                BeamableLogger.LogWarning("Please add some gas money to your account {accountAddress} to be able to pay for fees.", newAccount.Address);
-                return newAccount;
+                account = await CreateAccount(accountName);
+                if (account is null)
+                {
+                    BeamableLogger.LogWarning("Account already created, fetching again");
+                    return await GetOrCreateAccount(accountName);
+                }
+                BeamableLogger.Log("Saved account {accountName} -> {accountAddress}", accountName, account.Address);
             }
-
-            BeamableLogger.LogWarning("Account already created, fetching again");
-            return await GetOrCreateAccount(accountName);
+            return account;
         }
 
         public static async ValueTask<Account> GetOrCreateRealmAccount()
         {
-            if (_cachedRealmAccount == null) _cachedRealmAccount = await GetOrCreateAccount(RealmAccountName);
+            var account = await GetAccount(RealmAccountName);
+            if (account is null)
+            {
+                account = await CreateAccount(RealmAccountName);
+                if (account is null)
+                {
+                    BeamableLogger.LogWarning("Account already created, fetching again");
+                    return await GetOrCreateAccount(RealmAccountName);
+                }
+                BeamableLogger.Log("Saved account {accountName} -> {accountAddress}", RealmAccountName, account.Address);
+                BeamableLogger.LogWarning("Please add some gas money to your account {accountAddress} to be able to pay for fees.", account.Address);
+            }
+            return account;
+        }
 
-            return _cachedRealmAccount;
+        private static async Task<Account> GetAccount(string accountName)
+        {
+            var db = ServiceContext.Database;
+            return (await db.GetValutByName(accountName))?.ToAccount();
+        }
+
+        private static async Task<Account> CreateAccount(string accountName)
+        {
+            var db = ServiceContext.Database;
+            
+            var ecKey = EthECKey.GenerateKey();
+            var privateKeyBytes = ecKey.GetPrivateKeyAsBytes();
+            var newAccount = new Account(privateKeyBytes);
+
+            return (await db.TryInsertValut(new Vault
+            {
+                Name = accountName,
+                Value = KeystoreService.EncryptAndGenerateKeyStore(Configuration.RealmSecret, privateKeyBytes, newAccount.Address)
+            })) ? newAccount : null;
         }
     }
 }
