@@ -155,14 +155,20 @@ namespace Beamable.Microservices.PolygonFederation
                 ServiceContext.Database = database;
                 ServiceContext.Requester = initializer.GetService<IBeamableRequester>();
 
-                // Load realm configuration
-                var realmConfigService = initializer.GetService<IMicroserviceRealmConfigService>();
-                Configuration.RealmConfig = await realmConfigService.GetRealmConfigSettings();
-
                 // Load realm account/wallet
                 var realmAccount = await AccountsService.GetOrCreateRealmAccount();
                 ServiceContext.RealmAccount = realmAccount;
-
+                
+                // Load realm configuration
+                var realmConfigService = initializer.GetService<IMicroserviceRealmConfigService>();
+                Configuration.RealmConfig = await realmConfigService.GetRealmConfigSettings();
+                
+                // Validate configuration
+                if (string.IsNullOrEmpty(Configuration.RPCEndpoint))
+                {
+                    throw new ConfigurationException($"{nameof(Configuration.RPCEndpoint)} is not defined in realm config. Please apply the configuration and restart the service to make it operational.");
+                }
+                
                 // Set the RPC client
                 ServiceContext.RpcClient = new EthRpcClient(new Web3(realmAccount, Configuration.RPCEndpoint, default, null));
 
@@ -171,7 +177,7 @@ namespace Beamable.Microservices.PolygonFederation
             catch (Exception ex)
             {
                 BeamableLogger.LogException(ex);
-                BeamableLogger.LogWarning("Service initialization failed. Please fix the issues and restart the microservice to make it operational.");
+                BeamableLogger.LogWarning("Service initialization failed. Please fix the issues before using the service.");
             }
         }
 

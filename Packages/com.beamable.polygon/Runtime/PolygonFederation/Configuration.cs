@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Net;
+using Beamable.Server;
 using Beamable.Server.Api.RealmConfig;
 
 namespace Beamable.Microservices.PolygonFederation
@@ -14,7 +15,7 @@ namespace Beamable.Microservices.PolygonFederation
 
         public static RealmConfig RealmConfig { get; internal set; }
 
-        public static string RPCEndpoint => GetValue(nameof(RPCEndpoint), "https://rpc-mumbai.maticvigil.com/v1/9d02f632ba42a806ee80bd57f4e1b358c7dcddfc");
+        public static string RPCEndpoint => GetValue(nameof(RPCEndpoint), "");
         public static bool AllowManagedAccounts => GetValue(nameof(AllowManagedAccounts), true);
         public static int AuthenticationChallengeTtlSec => GetValue(nameof(AuthenticationChallengeTtlSec), 600);
 
@@ -25,6 +26,13 @@ namespace Beamable.Microservices.PolygonFederation
             if (value is null)
                 return defaultValue;
             return (T)Convert.ChangeType(value, typeof(T));
+        }
+    }
+
+    class ConfigurationException : MicroserviceException
+    {
+        public ConfigurationException(string message) : base((int)HttpStatusCode.BadRequest, "ConfigurationError", message)
+        {
         }
     }
 }
