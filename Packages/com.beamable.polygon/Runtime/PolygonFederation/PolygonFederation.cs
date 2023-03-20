@@ -73,7 +73,7 @@ namespace Beamable.Microservices.PolygonFederation
 
         public async Promise<FederatedInventoryProxyState> StartInventoryTransaction(string id, string transaction, Dictionary<string, long> currencies, List<ItemCreateRequest> newItems)
         {
-            await CheckContext();
+            await InitializeDefaultContract();
 
             if (currencies.Any() || newItems.Any())
             {
@@ -101,7 +101,7 @@ namespace Beamable.Microservices.PolygonFederation
 
         public async Promise<FederatedInventoryProxyState> GetInventoryState(string id)
         {
-            await CheckContext();
+            await InitializeDefaultContract();
 
             var inventoryResponse = await ServiceContext.RpcClient
                 .SendFunctionQueryAsync<ER1155GetInventoryFunctionMessage, ERC1155GetInventoryFunctionOutput>(
@@ -165,6 +165,8 @@ namespace Beamable.Microservices.PolygonFederation
 
                 // Set the RPC client
                 ServiceContext.RpcClient = new EthRpcClient(new Web3(realmAccount, Configuration.RPCEndpoint, default, null));
+
+                await InitializeDefaultContract();
             }
             catch (Exception ex)
             {
@@ -173,7 +175,7 @@ namespace Beamable.Microservices.PolygonFederation
             }
         }
 
-        private static async ValueTask CheckContext()
+        private static async ValueTask InitializeDefaultContract()
         {
             if (ServiceContext.DefaultContract is null)
             {

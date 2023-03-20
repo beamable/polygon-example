@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Beamable.Common;
 using Beamable.Microservices.PolygonFederation.Features.Contracts.Exceptions;
@@ -17,7 +18,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Contracts
 {
     internal static class ContractService
     {
-        private static readonly ConcurrentDictionary<string, Contract> ContractCache = new();
+        private static readonly ConcurrentDictionary<string, Lazy<Task<Contract>>> ContractCache = new();
 
         private const string DefaultErc1155Path = "Solidity/Contracts/DefaultERC1155.sol";
         private static readonly string DefaultContractSource = File.ReadAllText(DefaultErc1155Path);
@@ -28,7 +29,10 @@ namespace Beamable.Microservices.PolygonFederation.Features.Contracts
         
         public static async ValueTask<Contract> GetOrCreateContract(string name, string sourceCode)
         {
-            var contract = ContractCache.GetOrAdd(name, await CompileAndSaveContract(name, sourceCode));
+            // We're using the "lazy initialization trick" to ensure that the concurrent dictionary factory functions runs only once
+            // https://andrewlock.net/making-getoradd-on-concurrentdictionary-thread-safe-using-lazy/
+            var contractLazy = ContractCache.GetOrAdd(name, new Lazy<Task<Contract>>(() => CompileAndSaveContract(name, sourceCode), LazyThreadSafetyMode.ExecutionAndPublication));
+            var contract = await contractLazy.Value;
             ServiceContext.BaseMetadataUri = new Uri(contract.BaseMetadataUri);
             return contract;
         }
