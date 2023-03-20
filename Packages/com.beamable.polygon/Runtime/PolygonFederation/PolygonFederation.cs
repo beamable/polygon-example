@@ -64,6 +64,13 @@ namespace Beamable.Microservices.PolygonFederation
             };
         }
 
+        [ClientCallable]
+        public async Promise<string> GetRealmAccount()
+        {
+            var realmAccount = await AccountsService.GetOrCreateRealmAccount();
+            return realmAccount.Address;
+        }
+
         public async Promise<FederatedInventoryProxyState> StartInventoryTransaction(string id, string transaction, Dictionary<string, long> currencies, List<ItemCreateRequest> newItems)
         {
             await CheckContext();

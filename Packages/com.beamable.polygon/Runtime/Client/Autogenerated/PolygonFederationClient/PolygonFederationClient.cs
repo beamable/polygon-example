@@ -30,6 +30,16 @@ namespace Beamable.Server.Clients
                 return "PolygonFederation";
             }
         }
+        
+        /// <summary>
+        /// Call the GetRealmAccount method on the PolygonFederation microservice
+        /// <see cref="Beamable.Microservices.PolygonFederation.PolygonFederation.GetRealmAccount"/>
+        /// </summary>
+        public Beamable.Common.Promise<string> GetRealmAccount()
+        {
+            string[] serializedFields = new string[0];
+            return this.Request<string>("PolygonFederation", "GetRealmAccount", serializedFields);
+        }
     }
     
     internal sealed class MicroserviceParametersPolygonFederationClient
