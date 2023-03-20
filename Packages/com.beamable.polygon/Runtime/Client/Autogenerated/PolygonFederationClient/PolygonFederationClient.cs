@@ -38,7 +38,7 @@ namespace Beamable.Server.Clients
         public Beamable.Common.Promise<string> GetRealmAccount()
         {
             string[] serializedFields = new string[0];
-            return this.Request<string>("PolygonFederation", "GetRealmAccount", serializedFields);
+            return this.Request<string>("PolygonFederation", "/polygon/get-realm-account", serializedFields);
         }
     }
     
