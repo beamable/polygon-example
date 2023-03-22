@@ -64,7 +64,7 @@ namespace Beamable.Microservices.PolygonFederation
             };
         }
 
-        [ClientCallable("/polygon/get-realm-account")]
+        [ClientCallable("polygon/get-realm-account")]
         public async Promise<string> GetRealmAccount()
         {
             var realmAccount = await AccountsService.GetOrCreateRealmAccount();
