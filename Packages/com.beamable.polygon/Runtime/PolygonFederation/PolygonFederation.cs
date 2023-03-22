@@ -13,6 +13,7 @@ using Beamable.Microservices.PolygonFederation.Features.Contracts.Functions.Mode
 using Beamable.Microservices.PolygonFederation.Features.EthRpc;
 using Beamable.Microservices.PolygonFederation.Features.Minting;
 using Beamable.Microservices.PolygonFederation.Features.Minting.Storage;
+using Beamable.Microservices.PolygonFederation.Features.Transactions;
 using Beamable.Polygon.Common;
 using Beamable.Server;
 using Beamable.Server.Api.RealmConfig;
@@ -75,27 +76,37 @@ namespace Beamable.Microservices.PolygonFederation
         {
             await InitializeDefaultContract();
 
-            if (currencies.Any() || newItems.Any())
+            await TransactionManager.SaveTransaction(transaction);
+
+            try
             {
-                var currencyMints = currencies.Select(c => new MintRequest
+                if (currencies.Any() || newItems.Any())
                 {
-                    ContentId = c.Key,
-                    Amount = (uint)c.Value,
-                    Properties = new Dictionary<string, string>(),
-                    IsUnique = false
-                });
+                    var currencyMints = currencies.Select(c => new MintRequest
+                    {
+                        ContentId = c.Key,
+                        Amount = (uint)c.Value,
+                        Properties = new Dictionary<string, string>(),
+                        IsUnique = false
+                    });
 
-                var itemMints = newItems.Select(i => new MintRequest
-                {
-                    ContentId = i.contentId,
-                    Amount = 1,
-                    Properties = i.properties,
-                    IsUnique = true
-                });
+                    var itemMints = newItems.Select(i => new MintRequest
+                    {
+                        ContentId = i.contentId,
+                        Amount = 1,
+                        Properties = i.properties,
+                        IsUnique = true
+                    });
 
-                await MintingService.Mint(id, currencyMints.Union(itemMints).ToList());
+                    await MintingService.Mint(id, currencyMints.Union(itemMints).ToList());
+                }
             }
-
+            catch (Exception ex)
+            {
+                BeamableLogger.LogError("Error processing transaction {transaction} -> {error}. Clearing the transaction record to enable retries.", transaction, ex.Message);
+                await TransactionManager.ClearTransaction(transaction);
+            }
+            
             return await GetInventoryState(id);
         }
 
