@@ -6,8 +6,6 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting.Storage.Mode
     public class Counter
     {
         [BsonElement("_id")]
-        public ObjectId ID { get; set; } = ObjectId.GenerateNewId();
-
         public string Name { get; set; }
         public uint State { get; set; }
     }

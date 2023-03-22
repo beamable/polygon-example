@@ -13,12 +13,6 @@ namespace Beamable.Microservices.PolygonFederation.Features.Accounts.Storage
             if (_collection is null)
             {
                 _collection = db.GetCollection<Vault>("vault");
-                await _collection.Indexes.CreateOneAsync(
-                    new CreateIndexModel<Vault>(
-                        Builders<Vault>.IndexKeys.Ascending(x => x.Name),
-                        new CreateIndexOptions { Unique = true }
-                    )
-                );
             }
 
             return _collection;
