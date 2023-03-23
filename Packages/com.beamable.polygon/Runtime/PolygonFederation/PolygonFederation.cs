@@ -100,14 +100,14 @@ namespace Beamable.Microservices.PolygonFederation
 
                     await MintingService.Mint(id, currencyMints.Union(itemMints).ToList());
                 }
+                return await GetInventoryState(id);
             }
             catch (Exception ex)
             {
                 BeamableLogger.LogError("Error processing transaction {transaction} -> {error}. Clearing the transaction record to enable retries.", transaction, ex.Message);
                 await TransactionManager.ClearTransaction(transaction);
+                throw;
             }
-            
-            return await GetInventoryState(id);
         }
 
         public async Promise<FederatedInventoryProxyState> GetInventoryState(string id)
