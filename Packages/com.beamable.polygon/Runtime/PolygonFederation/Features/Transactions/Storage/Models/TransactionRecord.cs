@@ -8,6 +8,6 @@ namespace Beamable.Microservices.PolygonFederation.Features.Transactions.Storage
         [BsonElement("_id")]
         public string Id { get; set; }
 
-        public DateTime ExpireAt { get; set; } = DateTime.Now.AddMinutes(10);
+        public DateTime ExpireAt { get; set; } = DateTime.Now.AddDays(1);
     }
 }
