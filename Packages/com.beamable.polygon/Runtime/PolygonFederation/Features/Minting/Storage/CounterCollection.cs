@@ -8,7 +8,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting.Storage
     {
         private static IMongoCollection<Counter> _collection;
 
-        private static async ValueTask<IMongoCollection<Counter>> Get(IMongoDatabase db)
+        private static IMongoCollection<Counter> Get(IMongoDatabase db)
         {
             if (_collection is null)
             {
@@ -20,7 +20,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting.Storage
 
         public static async Task<uint> GetNextCounterValue(this IMongoDatabase db, string counterName)
         {
-            var collection = await Get(db);
+            var collection = Get(db);
             var update = Builders<Counter>.Update.Inc(x => x.State, (uint)1);
 
             var options = new FindOneAndUpdateOptions<Counter>
