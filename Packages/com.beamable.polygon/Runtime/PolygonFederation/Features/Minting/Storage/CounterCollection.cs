@@ -13,15 +13,6 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting.Storage
             if (_collection is null)
             {
                 _collection = db.GetCollection<Counter>("counter");
-                await _collection.Indexes.CreateManyAsync(new[]
-                    {
-                        new CreateIndexModel<Counter>(
-                            Builders<Counter>.IndexKeys
-                                .Ascending(x => x.Name),
-                            new CreateIndexOptions { Unique = true }
-                        )
-                    }
-                );
             }
 
             return _collection;
