@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,30 +17,30 @@ namespace Beamable.Microservices.PolygonFederation.Features.Contracts
 {
     internal static class ContractService
     {
-        private static readonly ConcurrentDictionary<string, Lazy<Task<Contract>>> ContractCache = new();
-
         private const string DefaultErc1155Path = "Solidity/Contracts/DefaultERC1155.sol";
         private static readonly string DefaultContractSource = File.ReadAllText(DefaultErc1155Path);
-        
         public const string DefaultContractName = "default";
 
-        public static async ValueTask<Contract> GetOrCreateDefaultContract() => await GetOrCreateContract(DefaultContractName, DefaultContractSource);
-        
-        public static async ValueTask<Contract> GetOrCreateContract(string name, string sourceCode)
+        private static readonly SemaphoreSlim Semaphore = new(1);
+
+        public static async ValueTask<Contract> GetOrCreateDefaultContract()
         {
-            // We're using the "lazy initialization trick" to ensure that the concurrent dictionary factory functions runs only once
-            // https://andrewlock.net/making-getoradd-on-concurrentdictionary-thread-safe-using-lazy/
-            var contractLazy = ContractCache.GetOrAdd(name, new Lazy<Task<Contract>>(() => CompileAndSaveContract(name, sourceCode), LazyThreadSafetyMode.ExecutionAndPublication));
-            var contract = await contractLazy.Value;
-            ServiceContext.BaseMetadataUri = new Uri(contract.BaseMetadataUri);
-            return contract;
+            await Semaphore.WaitAsync();
+            try
+            {
+                return await GetOrCreateContract(DefaultContractName, DefaultContractSource);
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
         }
 
-        private static async Task<Contract> CompileAndSaveContract(string name, string sourceCode)
+        private static async Task<Contract> GetOrCreateContract(string name, string sourceCode)
         {
             var persistedContract = await ServiceContext.Database.GetContract(name);
             if (persistedContract is not null) return persistedContract;
-            
+
             BeamableLogger.Log("Creating contract {contractName}", name);
 
             var compilerOutput = await Compile(sourceCode);
