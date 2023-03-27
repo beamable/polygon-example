@@ -8,7 +8,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Accounts.Storage
     {
         private static IMongoCollection<Vault> _collection;
 
-        private static async ValueTask<IMongoCollection<Vault>> Get(IMongoDatabase db)
+        private static IMongoCollection<Vault> Get(IMongoDatabase db)
         {
             if (_collection is null)
             {
@@ -20,7 +20,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Accounts.Storage
 
         public static async Task<Vault> GetValutByName(this IMongoDatabase db, string name)
         {
-            var collection = await Get(db);
+            var collection = Get(db);
             return await collection
                 .Find(x => x.Name == name)
                 .FirstOrDefaultAsync();
@@ -28,7 +28,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Accounts.Storage
 
         public static async Task<bool> TryInsertValut(this IMongoDatabase db, Vault vault)
         {
-            var collection = await Get(db);
+            var collection = Get(db);
             try
             {
                 await collection.InsertOneAsync(vault);
