@@ -125,7 +125,7 @@ Resulting metadata file:
 }
 ```
 
-## Configuration~~~~
+## Configuration
 Configuration defaults are hard-coded inside **Runtime/PolygonFederation/Configuration.cs**  
 You can override the values using the realm configuration.  
 ![Realm Configuration Example](Screenshots/realm-config.png)
