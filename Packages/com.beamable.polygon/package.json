@@ -1,6 +1,6 @@
 {
   "name": "com.beamable.polygon",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "displayName": "Beamable Polygon",
   "description": "Integrate login and inventory with the Polygon blockchain.",
   "unity": "2021.3",
