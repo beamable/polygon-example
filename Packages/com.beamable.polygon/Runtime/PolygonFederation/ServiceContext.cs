@@ -14,6 +14,5 @@ namespace Beamable.Microservices.PolygonFederation
         public static Contract DefaultContract;
         public static EthRpcClient RpcClient;
         public static IBeamableRequester Requester;
-        public static Uri BaseMetadataUri;
     }
 }

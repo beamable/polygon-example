@@ -59,7 +59,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting
 
         public static async Task<List<ItemProperty>> LoadItemProperties(string hash)
         {
-            var uri = new Uri(ServiceContext.BaseMetadataUri, hash);
+            var uri = new Uri(new Uri(ServiceContext.DefaultContract.BaseMetadataUri), hash);
             var responseString = await HttpClient.GetStringAsync(uri);
             var metadata = JsonConvert.DeserializeObject<NftExternalMetadata>(responseString);
             if (metadata is not null)
