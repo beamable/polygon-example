@@ -132,10 +132,12 @@ You can override the values using the realm configuration.
 
 **Default values:**
 
-| **Namespace**      | **Key**                       | **Default value** | **Description**                                                               |
-|--------------------|-------------------------------|-------------------|-------------------------------------------------------------------------------|
-| federation_polygon | RPCEndpoint                   |                   | Cluster RPC API URI                                                           |
-| federation_polygon | AllowManagedAccounts          | true              | Allow custodial wallets for players                                           |
-| federation_polygon | AuthenticationChallengeTtlSec | 600               | Authentication challenge TTL |
+| **Namespace**      | **Key**                       | **Default value** | **Description**                                      |
+|--------------------|-------------------------------|-------------------|------------------------------------------------------|
+| federation_polygon | RPCEndpoint                   |                   | Cluster RPC API URI                                  |
+| federation_polygon | AllowManagedAccounts          | true              | Allow custodial wallets for players                  |
+| federation_polygon | AuthenticationChallengeTtlSec | 600               | Authentication challenge TTL                         |
+| federation_polygon | ReceiptPoolIntervalMs         | 200               | Pooling interval when fetching a transaction receipt |
+| federation_polygon | ReceiptPoolTimeoutMs          | 20000             | Timout when fetching a transaction receipt           |
 
 **IMPORTANT:** Configuration is loaded when the service starts. Any configuration change requires a service restart.
