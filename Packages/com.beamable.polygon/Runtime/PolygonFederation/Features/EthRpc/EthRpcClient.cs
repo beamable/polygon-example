@@ -49,13 +49,9 @@ namespace Beamable.Microservices.PolygonFederation.Features.EthRpc
                 }
 
                 BeamableLogger.Log("Transaction hash is {transactionHash}", transactionHash);
-
                 var receipt = await FetchReceiptAsync(transactionHash);
-
                 BeamableLogger.Log("Response: {@response}", receipt);
-
                 if (!receipt.Succeeded()) throw new ContractDeployException("Contract deployment failed. Check microservice logs.");
-
                 return receipt;
             }
         }
@@ -80,13 +76,9 @@ namespace Beamable.Microservices.PolygonFederation.Features.EthRpc
                 }
 
                 BeamableLogger.Log("Transaction hash is {transactionHash}", transactionHash);
-
                 var receipt = await FetchReceiptAsync(transactionHash);
-
                 BeamableLogger.Log("Response: {@response}", receipt);
-
                 if (!receipt.Succeeded()) throw new ContractException("Transaction failed. Check microservice logs.");
-
                 return receipt;
             }
         }
