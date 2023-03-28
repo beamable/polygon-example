@@ -22,7 +22,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.EthRpc
             _web3 = web3;
         }
 
-        public async Task<HexBigInteger> EstimateContractGasAsync(Account realmAccount, string abi, string contractByteCode, string from, params object[] values)
+        public async Task<HexBigInteger> EstimateContractGasAsync(Account realmAccount, string abi, string contractByteCode)
         {
             using (new Measure("EstimateContractGasAsync"))
             {
@@ -36,34 +36,62 @@ namespace Beamable.Microservices.PolygonFederation.Features.EthRpc
         {
             using (new Measure("DeployContractAsync"))
             {
-                var result = await _web3.Eth.DeployContract.SendRequestAndWaitForReceiptAsync(abi, contractByteCode,
-                    realmAccount.Address, gas, CancellationToken.None);
+                string transactionHash;
+                try
+                {
+                    transactionHash = await _web3.Eth.DeployContract.SendRequestAsync(abi, contractByteCode, realmAccount.Address, gas);
+                }
+                catch (Exception ex)
+                {
+                    BeamableLogger.LogWarning("Resetting nonce due to error: {error}", ex.Message);
+                    await _web3.TransactionManager.Account.NonceService.ResetNonceAsync();
+                    throw;
+                }
 
-                BeamableLogger.Log("Response: {@response}", result);
+                BeamableLogger.Log("Transaction hash is {transactionHash}", transactionHash);
 
-                if (!result.Succeeded()) throw new ContractDeployException("Contract deployment failed. Check microservice logs.");
+                var receipt = await FetchReceiptAsync(transactionHash);
 
-                return result;
+                BeamableLogger.Log("Response: {@response}", receipt);
+
+                if (!receipt.Succeeded()) throw new ContractDeployException("Contract deployment failed. Check microservice logs.");
+
+                return receipt;
             }
         }
 
-        public async Task<TransactionReceipt> SendRequestAndWaitForReceiptAsync<TContractMessage>(string contractAddress, TContractMessage functionMessage = null, CancellationTokenSource tokenSource = null)
+        public async Task<TransactionReceipt> SendTransactionAndWaitForReceiptAsync<TContractMessage>(string contractAddress, TContractMessage functionMessage = null)
             where TContractMessage : FunctionMessage, new()
         {
-            using (new Measure("SendRequestAndWaitForReceiptAsync"))
+            using (new Measure("SendTransactionAndWaitForReceiptAsync"))
             {
                 var handler = _web3.Eth.GetContractTransactionHandler<TContractMessage>();
-                var result = await handler.SendRequestAndWaitForReceiptAsync(contractAddress, functionMessage);
 
-                BeamableLogger.Log("Response: {@response}", result);
+                string transactionHash;
+                try
+                {
+                    transactionHash = await handler.SendRequestAsync(contractAddress, functionMessage);
+                }
+                catch (Exception ex)
+                {
+                    BeamableLogger.LogWarning("Resetting nonce due to error: {error}", ex.Message);
+                    await _web3.TransactionManager.Account.NonceService.ResetNonceAsync();
+                    throw;
+                }
 
-                if (!result.Succeeded()) throw new ContractException("Transaction failed. Check microservice logs.");
+                BeamableLogger.Log("Transaction hash is {transactionHash}", transactionHash);
 
-                return result;
+                var receipt = await FetchReceiptAsync(transactionHash);
+
+                BeamableLogger.Log("Response: {@response}", receipt);
+
+                if (!receipt.Succeeded()) throw new ContractException("Transaction failed. Check microservice logs.");
+
+                return receipt;
             }
         }
 
-        public async Task<TFunctionOutput> SendFunctionQueryAsync<TContractMessage, TFunctionOutput>(string contractAddress, TContractMessage functionMessage = null, CancellationTokenSource tokenSource = null)
+        public async Task<TFunctionOutput> SendFunctionQueryAsync<TContractMessage, TFunctionOutput>(string contractAddress, TContractMessage functionMessage = null)
             where TContractMessage : FunctionMessage, new()
             where TFunctionOutput : IFunctionOutputDTO, new()
         {
@@ -80,6 +108,22 @@ namespace Beamable.Microservices.PolygonFederation.Features.EthRpc
                     throw new ContractException(ex.Message);
                 }
             }
+        }
+
+        private async Task<TransactionReceipt> FetchReceiptAsync(string transactionHash)
+        {
+            BeamableLogger.Log("Fetching receipt");
+            var receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
+
+            var tokenSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(Configuration.ReceiptPoolTimeoutMs));
+            while (receipt == null)
+            {
+                tokenSource.Token.ThrowIfCancellationRequested();
+                await Task.Delay(Configuration.ReceiptPoolIntervalMs, tokenSource.Token);
+                receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
+            }
+
+            return receipt;
         }
     }
 }

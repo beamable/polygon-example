@@ -48,7 +48,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Contracts
             var abi = contractOutput.GetAbi();
             var contractByteCode = contractOutput.GetBytecode();
 
-            var gas = await ServiceContext.RpcClient.EstimateContractGasAsync(ServiceContext.RealmAccount, abi, contractByteCode, ServiceContext.RealmAccount.Address);
+            var gas = await ServiceContext.RpcClient.EstimateContractGasAsync(ServiceContext.RealmAccount, abi, contractByteCode);
             var result = await ServiceContext.RpcClient.DeployContractAsync(ServiceContext.RealmAccount, abi, contractByteCode, gas);
 
             var contract = new Contract
@@ -80,7 +80,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Contracts
             var baseUriString = $"{uri.Scheme}://{uri.Host}{string.Concat(segments)}";
 
             BeamableLogger.Log("Setting the base uri to {baseUri}", baseUriString);
-            await ServiceContext.RpcClient.SendRequestAndWaitForReceiptAsync(contract.PublicKey, new ER1155SetUriFunctionMessage
+            await ServiceContext.RpcClient.SendTransactionAndWaitForReceiptAsync(contract.PublicKey, new ER1155SetUriFunctionMessage
             {
                 NewUri = baseUriString
             });

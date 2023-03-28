@@ -62,7 +62,7 @@ namespace Beamable.Microservices.PolygonFederation.Features.Minting
                 MetadataHashes = tokenMetadataHashes
             };
 
-            await ServiceContext.RpcClient.SendRequestAndWaitForReceiptAsync(ServiceContext.DefaultContract.PublicKey, functionMessage);
+            await ServiceContext.RpcClient.SendTransactionAndWaitForReceiptAsync(ServiceContext.DefaultContract.PublicKey, functionMessage);
 
             await db.InsertMints(mints);
         }

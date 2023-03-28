@@ -18,6 +18,8 @@ namespace Beamable.Microservices.PolygonFederation
         public static string RPCEndpoint => GetValue(nameof(RPCEndpoint), "");
         public static bool AllowManagedAccounts => GetValue(nameof(AllowManagedAccounts), true);
         public static int AuthenticationChallengeTtlSec => GetValue(nameof(AuthenticationChallengeTtlSec), 600);
+        public static int ReceiptPoolIntervalMs => GetValue(nameof(ReceiptPoolIntervalMs), 200);
+        public static int ReceiptPoolTimeoutMs => GetValue(nameof(ReceiptPoolTimeoutMs), 20000);
 
         private static T GetValue<T>(string key, T defaultValue) where T : IConvertible
         {
