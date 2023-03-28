@@ -112,18 +112,20 @@ namespace Beamable.Microservices.PolygonFederation.Features.EthRpc
 
         private async Task<TransactionReceipt> FetchReceiptAsync(string transactionHash)
         {
-            BeamableLogger.Log("Fetching receipt");
-            var receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
-
-            var tokenSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(Configuration.ReceiptPoolTimeoutMs));
-            while (receipt == null)
+            using (new Measure("FetchReceiptAsync"))
             {
-                tokenSource.Token.ThrowIfCancellationRequested();
-                await Task.Delay(Configuration.ReceiptPoolIntervalMs, tokenSource.Token);
-                receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
-            }
+                var receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
 
-            return receipt;
+                var tokenSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(Configuration.ReceiptPoolTimeoutMs));
+                while (receipt == null)
+                {
+                    tokenSource.Token.ThrowIfCancellationRequested();
+                    await Task.Delay(Configuration.ReceiptPoolIntervalMs, tokenSource.Token);
+                    receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
+                }
+
+                return receipt;
+            }
         }
     }
 }
