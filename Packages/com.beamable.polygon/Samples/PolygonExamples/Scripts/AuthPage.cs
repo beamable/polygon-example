@@ -8,6 +8,7 @@ using Beamable.Common.Api.Auth;
 using Beamable.Player;
 using Beamable.Polygon.Common;
 using Beamable.Server.Clients;
+using Thirdweb;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,7 @@ namespace PolygonExamples.Scripts
     /// </summary>
     public class AuthPage : TabPage
     {
-        // [SerializeField] private Button _connectWalletButton;
+        [SerializeField] private Button _connectWalletButton;
         [SerializeField] private Button _attachIdentityButton;
         [SerializeField] private Button _detachIdentityButton;
         [SerializeField] private Button _getExternalIdentitiesButton;
@@ -30,10 +31,11 @@ namespace PolygonExamples.Scripts
         [SerializeField] private TextMeshProUGUI _walletId;
 
         private IAuthService _authService;
+        private ThirdwebSDK _sdk;
 
         private async void Start()
         {
-            
+            _connectWalletButton.onClick.AddListener(OnConnectClicked);
             _attachIdentityButton.onClick.AddListener(OnAttachClicked);
             _detachIdentityButton.onClick.AddListener(OnDetachClicked);
             _walletExplorerButton.onClick.AddListener(OnWalletExplorerClicked);
@@ -46,49 +48,68 @@ namespace PolygonExamples.Scripts
             await BeamContext.Default.Accounts.OnReady;
 
             var external = BeamContext.Default.Accounts.Current.ExternalIdentities.FirstOrDefault(ext =>
-                ext.providerNamespace == Ctx.GetExampleData().Federation.Namespace
-                && ext.providerService == Ctx.GetExampleData().Federation.Service);
-            Ctx.GetExampleData().WalletId = external?.userId ?? null;
-            
+                ext.providerNamespace == Data.Federation.Namespace
+                && ext.providerService == Data.Federation.Service);
+            Data.WalletId = external?.userId ?? null;
             _beamId.text = $"<b>Beam ID</b> {Ctx.Accounts.Current.GamerTag.ToString()}";
+
+            _sdk = new ThirdwebSDK("polygon");
+
             OnRefresh();
+        }
+
+        private async void OnConnectClicked()
+        {
+            Data.Working = true;
+
+            Data.WalletId = await _sdk
+                .wallet
+                .Connect(new WalletConnection
+                {
+                    provider = WalletProvider.MetaMask,
+                    chainId = (int)Chain.Polygon
+                });
+
+            Data.Working = false;
         }
 
         public override void OnRefresh()
         {
-            _walletExplorerButton.interactable = Ctx.GetExampleData().WalletConnected;
-            _attachIdentityButton.interactable = !Ctx.GetExampleData().Working && !Ctx.GetExampleData().WalletConnected;
-            _detachIdentityButton.interactable = !Ctx.GetExampleData().Working && Ctx.GetExampleData().WalletConnected;
-            _getExternalIdentitiesButton.interactable = !Ctx.GetExampleData().Working;
+            _connectWalletButton.interactable = !Data.Working && !Data.WalletConnected;
+            _attachIdentityButton.interactable = !Data.Working && Data.WalletConnected && !Data.WalletAttached;
+            _detachIdentityButton.interactable = !Data.Working && Data.WalletConnected && Data.WalletAttached;
+            _getExternalIdentitiesButton.interactable = !Data.Working;
+            _walletExplorerButton.interactable = Data.WalletConnected;
+
             UpdateWalletIdText();
         }
 
         void UpdateWalletIdText()
         {
-            _walletId.text = Ctx.GetExampleData().WalletConnected
-                ? $"<b>Wallet Id</b> {Ctx.GetExampleData().WalletId}"
+            _walletId.text = Data.WalletConnected
+                ? $"<b>Wallet Id</b> {Data.WalletId}"
                 : String.Empty;
         }
 
         private void OnWalletExplorerClicked()
         {
-            var address = $"https://mumbai.polygonscan.com/address/{Ctx.GetExampleData().WalletId}";
+            var address = $"https://mumbai.polygonscan.com/address/{Data.WalletId}";
             Application.OpenURL(address);
         }
 
         private async void OnAttachClicked()
         {
-            Ctx.GetExampleData().Working = true;
+            Data.Working = true;
             OnLog("Attaching wallet...");
             await SendAttachRequest();
-            CheckIfWalletHasAttachedIdentity();
-            Ctx.GetExampleData().Working = false;
+            Data.WalletAttached = CheckIfWalletHasAttachedIdentity();
+            Data.Working = false;
 
             async Promise SendAttachRequest(ChallengeSolution challengeSolution = null)
             {
                 StringBuilder builder = new();
                 builder.AppendLine("Sending a request with:");
-                builder.AppendLine($"Provider service: {Ctx.GetExampleData().Federation.Service}");
+                builder.AppendLine($"Provider service: {Data.Federation.Service}");
                 if (challengeSolution != null)
                 {
                     builder.AppendLine($"Signed solution: {challengeSolution.solution}");
@@ -96,36 +117,61 @@ namespace PolygonExamples.Scripts
 
                 OnLog(builder.ToString());
 
-                var emptyToken = "";
-                RegistrationResult result =
-                    await Ctx.Accounts.AddExternalIdentity<PolygonCloudIdentity, PolygonFederationClient>(emptyToken);
-
-                var publicKey = result.account.ExternalIdentities[0].userId; // aka- walletId
-                
-                if (result.isSuccess)
+                if (Data.WalletConnected)
                 {
-                    Ctx.GetExampleData().WalletId = publicKey;
+                    RegistrationResult result =
+                        await Ctx.Accounts.AddExternalIdentity<PolygonCloudIdentity, PolygonFederationClient>(
+                            Data.WalletId,
+                            SolveChallenge);
 
-                    OnLog($"Succesfully attached an external identity... publicKey=[{publicKey}]");
+                    if (result.isSuccess)
+                    {
+                        OnLog($"Succesfully attached an external identity... publicKey=[{Data.WalletId}]");
+                    }
+                }
+                else
+                {
+                    OnLog("No wallet connected...");
                 }
             }
         }
 
+        /// <summary>
+        /// Method that shows a way to solve a challenge received from a server. It needs to be done to proof that we
+        /// are true owners of a wallet. After sending it back to a server it verifies it an decides wheter solution was
+        /// correct or not. Challenge token we are receving from server is a three-part, dot separated string and has
+        /// following format: {challenge}.{validUntilEpoch}.{signature} where:
+        ///		{challenge}			- Base64 encoded string
+        ///		{validUntilEpoch}	- valid until epoch time in milliseconds, Int64 value
+        ///		{signature}			- Base64 encoded token signature
+        /// </summary>
+        /// <param name="challengeToken"></param>
+        /// <returns></returns>
+        private async Promise<string> SolveChallenge(string challengeToken)
+        {
+            OnLog($"Signing a challenge: {challengeToken}");
+
+            // Parsing received challenge token to a 3 part struct
+            ChallengeToken parsedToken = _authService.ParseChallengeToken(challengeToken);
+
+            string signedSignature = await _sdk.wallet.Sign(parsedToken.challenge);
+            OnLog($"Signed signature: {signedSignature}");
+
+            return signedSignature;
+        }
+
         private async void OnDetachClicked()
         {
-            Ctx.GetExampleData().Working = true;
+            Data.Working = true;
             OnLog("Detaching wallet...");
             await Ctx.Accounts.RemoveExternalIdentity<PolygonCloudIdentity, PolygonFederationClient>();
-            
+
             if (!CheckIfWalletHasAttachedIdentity())
             {
                 OnLog("Succesfully detached an external identity...");
             }
 
-            Ctx.GetExampleData().WalletId = null;
-
-            Ctx.GetExampleData().Working = false;
-            OnRefresh();
+            Data.Working = false;
         }
 
         /// <summary>
@@ -136,7 +182,7 @@ namespace PolygonExamples.Scripts
         /// </summary>
         private void OnGetExternalClicked()
         {
-            OnLog("Gettting external identities info...");
+            OnLog("Getting external identities info...");
             if (Ctx.Accounts.Current == null) return;
 
             if (Ctx.Accounts.Current.ExternalIdentities.Length != 0)
@@ -165,9 +211,9 @@ namespace PolygonExamples.Scripts
                 return false;
 
             ExternalIdentity externalIdentity = Ctx.Accounts.Current.ExternalIdentities.FirstOrDefault(i =>
-                i.providerNamespace == Ctx.GetExampleData().Federation.Namespace &&
-                i.providerService == Ctx.GetExampleData().Federation.Service &&
-                i.userId == Ctx.GetExampleData().WalletId);
+                i.providerNamespace == Data.Federation.Namespace &&
+                i.providerService == Data.Federation.Service &&
+                i.userId == Data.WalletId);
 
             return externalIdentity != null;
         }
