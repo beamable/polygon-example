@@ -1,7 +1,7 @@
 {
-    "cid": "1592133806642176",
+    "cid": "1602703643375620",
     "alias": "polygon-example",
-    "pid": "DE_1592133806642177",
+    "pid": "DE_1602703643375623",
     "platform": "",
     "socket": "",
     "containerPrefix": ""
