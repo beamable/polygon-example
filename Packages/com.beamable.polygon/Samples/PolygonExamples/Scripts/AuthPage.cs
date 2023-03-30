@@ -154,10 +154,18 @@ namespace PolygonExamples.Scripts
             // Parsing received challenge token to a 3 part struct
             ChallengeToken parsedToken = _authService.ParseChallengeToken(challengeToken);
 
-            string signedSignature = await _sdk.wallet.Sign(parsedToken.challenge);
-            OnLog($"Signed signature: {signedSignature}");
+            // Challenge we received to solve is Base64String and in this case we need plain string 
+            byte[] challengeBytes = Convert.FromBase64String(parsedToken.challenge);
+            string plainString = Encoding.UTF8.GetString(challengeBytes);
 
-            return signedSignature;
+            string signedSignature = await _sdk.wallet.Sign(plainString);
+
+            // We need to convert it back
+            string convertedSignature = Convert.ToBase64String(Encoding.UTF8.GetBytes(signedSignature));
+
+            OnLog($"Signed signature: {convertedSignature}");
+
+            return convertedSignature;
         }
 
         private async void OnDetachClicked()
