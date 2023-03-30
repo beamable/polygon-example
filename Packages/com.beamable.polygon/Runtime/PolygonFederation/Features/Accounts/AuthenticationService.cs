@@ -16,6 +16,11 @@ namespace Beamable.Microservices.PolygonFederation.Features.Accounts
                 var challengeBytes = Encoding.UTF8.GetBytes(challenge);
                 var signatureBytes = Convert.FromBase64String(signature);
 
+                if (!EthECDSASignature.IsValidDER(signatureBytes))
+                {
+                    BeamableLogger.LogWarning("Signature {signature} is not a valid DER");
+                }
+
                 var key = new EthECKey(publicKey.HexToByteArray(), false);
                 return key.Verify(challengeBytes, EthECDSASignature.FromDER(signatureBytes));
             }
