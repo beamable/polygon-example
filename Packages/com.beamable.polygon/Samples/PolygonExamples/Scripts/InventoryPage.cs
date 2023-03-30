@@ -25,24 +25,23 @@ namespace PolygonExamples.Scripts
         private void Start()
         {
             _getInventoryButton.onClick.AddListener(OnGetInventoryClicked);
-
             DownloadSprites();
         }
 
         private async void DownloadSprites()
         {
-            Ctx.GetExampleData().Working = true;
+            Data.Working = true;
 
             try
             {
-                CurrencyContent currencyContent = await Ctx.GetExampleData().CurrencyRef.Resolve();
+                CurrencyContent currencyContent = await Data.CurrencyRef.Resolve();
                 currencyContent.icon.LoadAssetAsync<Sprite>().Completed += handle =>
                 {
                     _cachedSprites.Add(currencyContent.Id, handle.Result);
 
                     if (_cachedSprites.Count == 2)
                     {
-                        Ctx.GetExampleData().Working = false;
+                        Data.Working = false;
                     }
                 };
             }
@@ -54,14 +53,14 @@ namespace PolygonExamples.Scripts
 
             try
             {
-                ItemContent itemContent = await Ctx.GetExampleData().ItemRef.Resolve();
+                ItemContent itemContent = await Data.ItemRef.Resolve();
                 itemContent.icon.LoadAssetAsync<Sprite>().Completed += handle =>
                 {
                     _cachedSprites.Add(itemContent.Id, handle.Result);
 
                     if (_cachedSprites.Count == 2)
                     {
-                        Ctx.GetExampleData().Working = false;
+                        Data.Working = false;
                     }
                 };
             }
@@ -74,14 +73,14 @@ namespace PolygonExamples.Scripts
 
         public override void OnRefresh()
         {
-            _getInventoryButton.interactable = !Ctx.GetExampleData().Working;
+            _getInventoryButton.interactable = !Data.Working;
         }
 
 
 
         private async void OnGetInventoryClicked()
         {
-            Ctx.GetExampleData().Working = true;
+            Data.Working = true;
 
             ClearItems();
 
@@ -109,7 +108,7 @@ namespace PolygonExamples.Scripts
                 }
             }
 
-            Ctx.GetExampleData().Working = false;
+            Data.Working = false;
 
             void ParseItems(Dictionary<string, List<ItemView>> items)
             {

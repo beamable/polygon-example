@@ -31,6 +31,18 @@ namespace PolygonExamples.Scripts
 			}
 		}
 		
+		private bool _walletAttached;
+
+		public bool WalletAttached
+		{
+			get => _walletAttached;
+			set
+			{
+				_walletAttached = value;
+				OnDataChanged?.Invoke();
+			}
+		}
+		
 		#endregion
 
 		#region Property getters
