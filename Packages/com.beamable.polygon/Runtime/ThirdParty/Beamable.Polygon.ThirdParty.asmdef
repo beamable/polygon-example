@@ -1,4 +1,5 @@
 {
+  "name": "Beamable.Polygon.ThirdParty",
   "references": [
     "Unity.Beamable",
     "Unity.Beamable.Runtime.Common",
@@ -7,13 +8,11 @@
     "Unity.Beamable.Server.Runtime.Mocks",
     "Unity.Beamable.Polygon.Common",
     "Beamable.Polygon.Client",
-    "Beamable.Polygon.ThirdParty",
     "Unity.ResourceManager",
     "Unity.Addressables",
     "Beamable.Platform",
     "Beamable.SmallerJSON",
     "Unity.TextMeshPro"
   ],
-  "name": "Beamable.Polygon.Examples",
   "autoReferenced": true
 }

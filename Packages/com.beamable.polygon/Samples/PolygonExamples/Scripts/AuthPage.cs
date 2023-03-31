@@ -10,7 +10,6 @@ using Beamable.Polygon.Common;
 using Beamable.Server.Clients;
 using Thirdweb;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
