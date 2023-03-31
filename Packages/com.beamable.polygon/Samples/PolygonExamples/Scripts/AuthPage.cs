@@ -10,6 +10,7 @@ using Beamable.Polygon.Common;
 using Beamable.Server.Clients;
 using Thirdweb;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -124,10 +125,9 @@ namespace PolygonExamples.Scripts
                             Data.WalletId,
                             SolveChallenge);
 
-                    if (result.isSuccess)
-                    {
-                        OnLog($"Succesfully attached an external identity... publicKey=[{Data.WalletId}]");
-                    }
+                    OnLog(result.isSuccess
+                        ? $"Succesfully attached an external identity... publicKey=[{Data.WalletId}]"
+                        : result.innerException.Message);
                 }
                 else
                 {
@@ -139,7 +139,7 @@ namespace PolygonExamples.Scripts
         /// <summary>
         /// Method that shows a way to solve a challenge received from a server. It needs to be done to proof that we
         /// are true owners of a wallet. After sending it back to a server it verifies it an decides wheter solution was
-        /// correct or not. Challenge token we are receving from server is a three-part, dot separated string and has
+        /// correct or not. Challenge token we are receiving from server is a three-part, dot separated string and has
         /// following format: {challenge}.{validUntilEpoch}.{signature} where:
         ///		{challenge}			- Base64 encoded string
         ///		{validUntilEpoch}	- valid until epoch time in milliseconds, Int64 value
@@ -153,19 +153,11 @@ namespace PolygonExamples.Scripts
 
             // Parsing received challenge token to a 3 part struct
             ChallengeToken parsedToken = _authService.ParseChallengeToken(challengeToken);
-
-            // Challenge we received to solve is Base64String and in this case we need plain string 
-            byte[] challengeBytes = Convert.FromBase64String(parsedToken.challenge);
-            string plainString = Encoding.UTF8.GetString(challengeBytes);
-
-            string signedSignature = await _sdk.wallet.Sign(plainString);
-
-            // We need to convert it back
-            string convertedSignature = Convert.ToBase64String(Encoding.UTF8.GetBytes(signedSignature));
-
-            OnLog($"Signed signature: {convertedSignature}");
-
-            return convertedSignature;
+            
+            // Signing a challenge with a connected wallet
+            string signedSignature = await _sdk.wallet.Sign(parsedToken.challenge);
+            
+            return signedSignature;
         }
 
         private async void OnDetachClicked()
