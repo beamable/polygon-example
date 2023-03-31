@@ -1,28 +1,21 @@
 ﻿using System;
-using System.Text;
 using Beamable.Common;
 using Beamable.Microservices.PolygonFederation.Features.Accounts.Exceptions;
-using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 
 namespace Beamable.Microservices.PolygonFederation.Features.Accounts
 {
     internal class AuthenticationService
     {
-        public static bool IsSignatureValid(string publicKey, string challenge, string signature)
+        private static readonly EthereumMessageSigner Signer = new();
+        
+        // Documentation: https://docs.nethereum.com/en/latest/Nethereum.Workbooks/docs/nethereum-signing-messages/
+        public static bool IsSignatureValid(string address, string challenge, string signature)
         {
             try
             {
-                var challengeBytes = Encoding.UTF8.GetBytes(challenge);
-                var signatureBytes = Convert.FromBase64String(signature);
-
-                if (!EthECDSASignature.IsValidDER(signatureBytes))
-                {
-                    BeamableLogger.LogWarning("Signature {signature} is not a valid DER");
-                }
-
-                var key = new EthECKey(publicKey.HexToByteArray(), false);
-                return key.Verify(challengeBytes, EthECDSASignature.FromDER(signatureBytes));
+                var recoveredAddress = Signer.EncodeUTF8AndEcRecover(challenge, signature);
+                return (recoveredAddress == address);
             }
             catch (Exception ex)
             {
