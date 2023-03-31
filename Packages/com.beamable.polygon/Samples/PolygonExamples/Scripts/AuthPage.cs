@@ -174,7 +174,9 @@ namespace PolygonExamples.Scripts
             OnLog("Detaching wallet...");
             await Ctx.Accounts.RemoveExternalIdentity<PolygonCloudIdentity, PolygonFederationClient>();
 
-            if (!CheckIfWalletHasAttachedIdentity())
+            Data.WalletAttached = CheckIfWalletHasAttachedIdentity();
+            
+            if (!Data.WalletAttached)
             {
                 OnLog("Succesfully detached an external identity...");
             }
