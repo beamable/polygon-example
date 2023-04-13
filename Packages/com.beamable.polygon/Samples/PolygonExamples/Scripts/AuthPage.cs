@@ -70,10 +70,16 @@ namespace PolygonExamples.Scripts
                 chainId = 137,
                 password = "Test1234"
             };
-#else
+#elif UNITY_WEBGL
             WalletConnection walletConnection = new WalletConnection
             {
                 provider = WalletProvider.MetaMask,
+                chainId = 137,
+            };
+#else
+            WalletConnection walletConnection = new WalletConnection
+            {
+                provider = WalletProvider.WalletConnect,
                 chainId = 137,
             };
 #endif
