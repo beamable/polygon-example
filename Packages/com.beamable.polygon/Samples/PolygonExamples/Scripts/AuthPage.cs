@@ -8,6 +8,7 @@ using Beamable.Common.Api.Auth;
 using Beamable.Player;
 using Beamable.Polygon.Common;
 using Beamable.Server.Clients;
+using Nethereum.Signer;
 using Thirdweb;
 using TMPro;
 using UnityEngine;
@@ -53,7 +54,7 @@ namespace PolygonExamples.Scripts
             Data.WalletId = external?.userId ?? null;
             _beamId.text = $"<b>Beam ID</b> {Ctx.Accounts.Current.GamerTag.ToString()}";
 
-            _sdk = new ThirdwebSDK("polygon");
+            _sdk = new ThirdwebSDK("polygon", 137);
 
             OnRefresh();
         }
@@ -67,7 +68,7 @@ namespace PolygonExamples.Scripts
                 .Connect(new WalletConnection
                 {
                     provider = WalletProvider.MetaMask,
-                    chainId = (int)Chain.Polygon
+                    chainId = 137
                 });
 
             Data.Working = false;

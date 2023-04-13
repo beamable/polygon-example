@@ -12,7 +12,9 @@
     "Unity.Addressables",
     "Beamable.Platform",
     "Beamable.SmallerJSON",
-    "Unity.TextMeshPro"
+    "Unity.TextMeshPro",
+    "endel.nativewebsocket",
+    "RotaryHeart"
   ],
   "autoReferenced": true
 }
