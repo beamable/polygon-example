@@ -8,7 +8,6 @@ using Beamable.Common.Api.Auth;
 using Beamable.Player;
 using Beamable.Polygon.Common;
 using Beamable.Server.Clients;
-using Nethereum.Signer;
 using Thirdweb;
 using TMPro;
 using UnityEngine;
@@ -63,14 +62,23 @@ namespace PolygonExamples.Scripts
         {
             Data.Working = true;
 
-            Data.WalletId = await _sdk
-                .wallet
-                .Connect(new WalletConnection
-                {
-                    provider = WalletProvider.MetaMask,
-                    chainId = 137
-                });
 
+#if UNITY_EDITOR
+            WalletConnection walletConnection = new WalletConnection
+            {
+                provider = WalletProvider.DeviceWallet,
+                chainId = 137,
+                password = "Test1234"
+            };
+#else
+            WalletConnection walletConnection = new WalletConnection
+            {
+                provider = WalletProvider.MetaMask,
+                chainId = 137,
+            };
+#endif
+
+            Data.WalletId = await _sdk.wallet.Connect(walletConnection);
             Data.Working = false;
         }
 
@@ -153,18 +161,18 @@ namespace PolygonExamples.Scripts
 
             // Parsing received challenge token to a 3 part struct
             ChallengeToken parsedToken = _authService.ParseChallengeToken(challengeToken);
-            
+
             // Challenge we received to solve is Base64String and in this case we need regular string 
             byte[] challengeBytes = Convert.FromBase64String(parsedToken.challenge);
             string regularString = Encoding.UTF8.GetString(challengeBytes);
 
             OnLog($"Solving challenge: {regularString}");
-            
+
             // Signing a challenge with a connected wallet
             string signedSignature = await _sdk.wallet.Sign(regularString);
 
             OnLog($"Returning with {signedSignature}");
-            
+
             return signedSignature;
         }
 
@@ -175,7 +183,7 @@ namespace PolygonExamples.Scripts
             await Ctx.Accounts.RemoveExternalIdentity<PolygonCloudIdentity, PolygonFederationClient>();
 
             Data.WalletAttached = CheckIfWalletHasAttachedIdentity();
-            
+
             if (!Data.WalletAttached)
             {
                 OnLog("Succesfully detached an external identity...");

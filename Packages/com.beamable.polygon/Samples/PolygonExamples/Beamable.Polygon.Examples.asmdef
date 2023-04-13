@@ -12,7 +12,8 @@
     "Unity.Addressables",
     "Beamable.Platform",
     "Beamable.SmallerJSON",
-    "Unity.TextMeshPro"
+    "Unity.TextMeshPro",
+    "endel.nativewebsocket"
   ],
   "name": "Beamable.Polygon.Examples",
   "autoReferenced": true
