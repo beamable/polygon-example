@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Packages/com.beamable.polygon/Samples/PolygonExamples/Scenes/SampleScene.unity
+    guid: a52b320b79c446aba40af9b1cdbcffb9
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: ae55c6739e8a5db4cb1404c11c65f67d, type: 2}
