@@ -23,7 +23,9 @@ namespace Thirdweb
     public class Wallet : Routable
     {
         public Wallet()
-            : base($"sdk{subSeparator}wallet") { }
+            : base($"sdk{subSeparator}wallet")
+        {
+        }
 
         /// <summary>
         /// Connect a user's wallet via a given wallet provider
@@ -36,94 +38,94 @@ namespace Thirdweb
                 var connection = walletConnection ?? new WalletConnection() { provider = WalletProvider.Injected, };
                 return await Bridge.Connect(connection);
             }
-            else
+
+            ThirdwebSDK.NativeSession oldSession = ThirdwebManager.Instance.SDK.nativeSession;
+
+            if (walletConnection == null)
             {
-                ThirdwebSDK.NativeSession oldSession = ThirdwebManager.Instance.SDK.nativeSession;
-
-                if (walletConnection == null)
-                {
-                    Account noPassAcc = Utils.UnlockOrGenerateAccount(oldSession.lastChainId, null, null);
-                    ThirdwebManager.Instance.SDK.nativeSession = new ThirdwebSDK.NativeSession(
-                        oldSession.lastChainId,
-                        oldSession.lastRPC,
-                        noPassAcc,
-                        new Web3(noPassAcc, oldSession.lastRPC),
-                        oldSession.options,
-                        oldSession.siweSession
-                    );
-                    return noPassAcc.Address;
-                }
-                else
-                {
-                    if (walletConnection?.provider?.ToString() == "walletConnect")
-                    {
-                        await WalletConnect.Instance.EnableWalletConnect();
-
-                        ThirdwebManager.Instance.SDK.nativeSession = new ThirdwebSDK.NativeSession(
-                            oldSession.lastChainId,
-                            oldSession.lastRPC,
-                            null,
-                            WalletConnect.Instance.Session.BuildWeb3(new Uri(oldSession.lastRPC)).AsWalletAccount(true),
-                            oldSession.options,
-                            oldSession.siweSession
-                        );
-
-                        // Switch to chain
-                        try
-                        {
-                            await WalletConnect.Instance.WalletSwitchEthChain(new EthChain() { chainId = ThirdwebManager.Instance.SDK.currentChainData.chainId });
-                        }
-                        catch (System.Exception e)
-                        {
-                            Debug.LogWarning("Switching chain error, attempting to add chain: " + e.Message);
-
-                            // Add chain
-                            try
-                            {
-                                await WalletConnect.Instance.WalletAddEthChain(ThirdwebManager.Instance.SDK.currentChainData);
-                                await WalletConnect.Instance.WalletSwitchEthChain(new EthChain() { chainId = ThirdwebManager.Instance.SDK.currentChainData.chainId });
-                            }
-                            catch (System.Exception f)
-                            {
-                                Debug.LogWarning("Adding chain error: " + f.Message);
-                                return Nethereum.Util.AddressUtil.Current.ConvertToChecksumAddress(WalletConnect.Instance.Session.Accounts[0]);
-                            }
-                        }
-
-                        return Nethereum.Util.AddressUtil.Current.ConvertToChecksumAddress(WalletConnect.Instance.Session.Accounts[0]);
-                    }
-                    else if (walletConnection?.password != null)
-                    {
-                        Account acc = Utils.UnlockOrGenerateAccount(oldSession.lastChainId, walletConnection?.password, null);
-                        ThirdwebManager.Instance.SDK.nativeSession = new ThirdwebSDK.NativeSession(
-                            oldSession.lastChainId,
-                            oldSession.lastRPC,
-                            acc,
-                            new Web3(acc, oldSession.lastRPC),
-                            oldSession.options,
-                            oldSession.siweSession
-                        );
-                        return acc.Address;
-                    }
-                    else if (walletConnection?.privateKey != null)
-                    {
-                        Account acc = Utils.UnlockOrGenerateAccount(oldSession.lastChainId, null, walletConnection?.privateKey);
-                        ThirdwebManager.Instance.SDK.nativeSession = new ThirdwebSDK.NativeSession(
-                            oldSession.lastChainId,
-                            oldSession.lastRPC,
-                            acc,
-                            new Web3(acc, oldSession.lastRPC),
-                            oldSession.options,
-                            oldSession.siweSession
-                        );
-                        return acc.Address;
-                    }
-                    else
-                    {
-                        throw new UnityException("This wallet connection method is not supported on this platform!");
-                    }
-                }
+                Account noPassAcc = Utils.UnlockOrGenerateAccount(oldSession.lastChainId, null, null);
+                ThirdwebManager.Instance.SDK.nativeSession = new ThirdwebSDK.NativeSession(
+                    oldSession.lastChainId,
+                    oldSession.lastRPC,
+                    noPassAcc,
+                    new Web3(noPassAcc, oldSession.lastRPC),
+                    oldSession.options,
+                    oldSession.siweSession
+                );
+                return noPassAcc.Address;
             }
+
+            if (walletConnection?.provider?.ToString() == "walletConnect")
+            {
+                await WalletConnect.Instance.EnableWalletConnect();
+
+                ThirdwebManager.Instance.SDK.nativeSession = new ThirdwebSDK.NativeSession(
+                    oldSession.lastChainId,
+                    oldSession.lastRPC,
+                    null,
+                    WalletConnect.Instance.Session.BuildWeb3(new Uri(oldSession.lastRPC)).AsWalletAccount(true),
+                    oldSession.options,
+                    oldSession.siweSession
+                );
+
+                // Switch to chain
+                try
+                {
+                    await WalletConnect.Instance.WalletSwitchEthChain(new EthChain()
+                        { chainId = ThirdwebManager.Instance.SDK.currentChainData.chainId });
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("Switching chain error, attempting to add chain: " + e.Message);
+
+                    // Add chain
+                    try
+                    {
+                        await WalletConnect.Instance.WalletAddEthChain(ThirdwebManager.Instance.SDK.currentChainData);
+                        await WalletConnect.Instance.WalletSwitchEthChain(new EthChain()
+                            { chainId = ThirdwebManager.Instance.SDK.currentChainData.chainId });
+                    }
+                    catch (Exception f)
+                    {
+                        Debug.LogWarning("Adding chain error: " + f.Message);
+                        return Nethereum.Util.AddressUtil.Current.ConvertToChecksumAddress(WalletConnect.Instance
+                            .Session.Accounts[0]);
+                    }
+                }
+
+                return Nethereum.Util.AddressUtil.Current.ConvertToChecksumAddress(WalletConnect.Instance.Session
+                    .Accounts[0]);
+            }
+
+            if (walletConnection?.password != null)
+            {
+                Account acc = Utils.UnlockOrGenerateAccount(oldSession.lastChainId, walletConnection?.password, null);
+                ThirdwebManager.Instance.SDK.nativeSession = new ThirdwebSDK.NativeSession(
+                    oldSession.lastChainId,
+                    oldSession.lastRPC,
+                    acc,
+                    new Web3(acc, oldSession.lastRPC),
+                    oldSession.options,
+                    oldSession.siweSession
+                );
+                return acc.Address;
+            }
+
+            if (walletConnection?.privateKey != null)
+            {
+                Account acc = Utils.UnlockOrGenerateAccount(oldSession.lastChainId, null, walletConnection?.privateKey);
+                ThirdwebManager.Instance.SDK.nativeSession = new ThirdwebSDK.NativeSession(
+                    oldSession.lastChainId,
+                    oldSession.lastRPC,
+                    acc,
+                    new Web3(acc, oldSession.lastRPC),
+                    oldSession.options,
+                    oldSession.siweSession
+                );
+                return acc.Address;
+            }
+
+            throw new UnityException("This wallet connection method is not supported on this platform!");
         }
 
         /// <summary>
@@ -163,7 +165,8 @@ namespace Thirdweb
         {
             if (Utils.IsWebGLBuild())
             {
-                return await Bridge.InvokeRoute<LoginPayload>($"auth{subSeparator}login", Utils.ToJsonStringArray(domain));
+                return await Bridge.InvokeRoute<LoginPayload>($"auth{subSeparator}login",
+                    Utils.ToJsonStringArray(domain));
             }
             else
             {
@@ -277,7 +280,8 @@ namespace Thirdweb
         {
             if (Utils.IsWebGLBuild())
             {
-                return await Bridge.InvokeRoute<CurrencyValue>(getRoute("balance"), Utils.ToJsonStringArray(currencyAddress));
+                return await Bridge.InvokeRoute<CurrencyValue>(getRoute("balance"),
+                    Utils.ToJsonStringArray(currencyAddress));
             }
             else
             {
@@ -288,9 +292,12 @@ namespace Thirdweb
                 }
                 else
                 {
-                    var balance = await ThirdwebManager.Instance.SDK.nativeSession.web3.Eth.GetBalance.SendRequestAsync(await ThirdwebManager.Instance.SDK.wallet.GetAddress());
+                    var balance =
+                        await ThirdwebManager.Instance.SDK.nativeSession.web3.Eth.GetBalance.SendRequestAsync(
+                            await ThirdwebManager.Instance.SDK.wallet.GetAddress());
                     var nativeCurrency = ThirdwebManager.Instance.SDK.currentChainData.nativeCurrency;
-                    return new CurrencyValue(nativeCurrency.name, nativeCurrency.symbol, nativeCurrency.decimals.ToString(), balance.Value.ToString(), balance.Value.ToString().ToEth());
+                    return new CurrencyValue(nativeCurrency.name, nativeCurrency.symbol,
+                        nativeCurrency.decimals.ToString(), balance.Value.ToString(), balance.Value.ToString().ToEth());
                 }
             }
         }
@@ -308,7 +315,8 @@ namespace Thirdweb
             {
                 if (Utils.ActiveWalletConnectSession())
                 {
-                    return Nethereum.Util.AddressUtil.Current.ConvertToChecksumAddress(WalletConnect.Instance.Session.Accounts[0]);
+                    return Nethereum.Util.AddressUtil.Current.ConvertToChecksumAddress(WalletConnect.Instance.Session
+                        .Accounts[0]);
                 }
                 else if (ThirdwebManager.Instance.SDK.nativeSession.account != null)
                 {
@@ -347,7 +355,8 @@ namespace Thirdweb
             }
             else
             {
-                int chainId = (int)(await ThirdwebManager.Instance.SDK.nativeSession.web3.Eth.ChainId.SendRequestAsync()).Value;
+                int chainId =
+                    (int)(await ThirdwebManager.Instance.SDK.nativeSession.web3.Eth.ChainId.SendRequestAsync()).Value;
                 ThirdwebManager.Instance.SDK.nativeSession.lastChainId = chainId;
                 return chainId;
             }
@@ -371,11 +380,13 @@ namespace Thirdweb
         /// <summary>
         /// Transfer currency to a given address
         /// </summary>
-        public async Task<TransactionResult> Transfer(string to, string amount, string currencyAddress = Utils.NativeTokenAddress)
+        public async Task<TransactionResult> Transfer(string to, string amount,
+            string currencyAddress = Utils.NativeTokenAddress)
         {
             if (Utils.IsWebGLBuild())
             {
-                return await Bridge.InvokeRoute<TransactionResult>(getRoute("transfer"), Utils.ToJsonStringArray(to, amount, currencyAddress));
+                return await Bridge.InvokeRoute<TransactionResult>(getRoute("transfer"),
+                    Utils.ToJsonStringArray(to, amount, currencyAddress));
             }
             else
             {
@@ -386,7 +397,8 @@ namespace Thirdweb
                 }
                 else
                 {
-                    var receipt = await ThirdwebManager.Instance.SDK.nativeSession.web3.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(to, decimal.Parse(amount));
+                    var receipt = await ThirdwebManager.Instance.SDK.nativeSession.web3.Eth.GetEtherTransferService()
+                        .TransferEtherAndWaitForReceiptAsync(to, decimal.Parse(amount));
                     return receipt.ToTransactionResult();
                 }
             }
@@ -410,7 +422,8 @@ namespace Thirdweb
                 else if (ThirdwebManager.Instance.SDK.nativeSession.account != null)
                 {
                     var signer = new EthereumMessageSigner();
-                    return signer.EncodeUTF8AndSign(message, new EthECKey(ThirdwebManager.Instance.SDK.nativeSession.account.PrivateKey));
+                    return signer.EncodeUTF8AndSign(message,
+                        new EthECKey(ThirdwebManager.Instance.SDK.nativeSession.account.PrivateKey));
                 }
                 else
                 {
@@ -426,7 +439,8 @@ namespace Thirdweb
         {
             if (Utils.IsWebGLBuild())
             {
-                return await Bridge.InvokeRoute<string>(getRoute("recoverAddress"), Utils.ToJsonStringArray(message, signature));
+                return await Bridge.InvokeRoute<string>(getRoute("recoverAddress"),
+                    Utils.ToJsonStringArray(message, signature));
             }
             else
             {
@@ -443,7 +457,8 @@ namespace Thirdweb
         {
             if (Utils.IsWebGLBuild())
             {
-                return await Bridge.InvokeRoute<TransactionResult>(getRoute("sendRawTransaction"), Utils.ToJsonStringArray(transactionRequest));
+                return await Bridge.InvokeRoute<TransactionResult>(getRoute("sendRawTransaction"),
+                    Utils.ToJsonStringArray(transactionRequest));
             }
             else
             {
@@ -454,7 +469,8 @@ namespace Thirdweb
                     new Nethereum.Hex.HexTypes.HexBigInteger(BigInteger.Parse(transactionRequest.gasLimit)),
                     new Nethereum.Hex.HexTypes.HexBigInteger(BigInteger.Parse(transactionRequest.gasPrice))
                 );
-                var receipt = await ThirdwebManager.Instance.SDK.nativeSession.web3.TransactionManager.SendTransactionAndWaitForReceiptAsync(input);
+                var receipt = await ThirdwebManager.Instance.SDK.nativeSession.web3.TransactionManager
+                    .SendTransactionAndWaitForReceiptAsync(input);
                 return receipt.ToTransactionResult();
             }
         }
@@ -471,6 +487,7 @@ namespace Thirdweb
                 {
                     options.address = await GetAddress();
                 }
+
                 await Bridge.FundWallet(options);
             }
             else
@@ -501,22 +518,27 @@ namespace Thirdweb
         {
             get { return new WalletProvider("metamask"); }
         }
+
         public static WalletProvider CoinbaseWallet
         {
             get { return new WalletProvider("coinbaseWallet"); }
         }
+
         public static WalletProvider WalletConnect
         {
             get { return new WalletProvider("walletConnect"); }
         }
+
         public static WalletProvider Injected
         {
             get { return new WalletProvider("injected"); }
         }
+
         public static WalletProvider MagicAuth
         {
             get { return new WalletProvider("magicAuth"); }
         }
+
         public static WalletProvider DeviceWallet
         {
             get { return new WalletProvider("deviceWallet"); }

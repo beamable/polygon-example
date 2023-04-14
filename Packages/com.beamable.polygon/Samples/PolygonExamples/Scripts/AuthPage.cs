@@ -12,6 +12,7 @@ using Thirdweb;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using WalletConnectSharp.Unity;
 
 namespace PolygonExamples.Scripts
 {
@@ -35,6 +36,8 @@ namespace PolygonExamples.Scripts
 
         private async void Start()
         {
+            DisableButtons();
+            
             _connectWalletButton.onClick.AddListener(OnConnectClicked);
             _attachIdentityButton.onClick.AddListener(OnAttachClicked);
             _detachIdentityButton.onClick.AddListener(OnDetachClicked);
@@ -86,6 +89,15 @@ namespace PolygonExamples.Scripts
 
             Data.WalletId = await _sdk.wallet.Connect(walletConnection);
             Data.Working = false;
+        }
+
+        private void DisableButtons()
+        {
+            _connectWalletButton.interactable = false;
+            _attachIdentityButton.interactable = false;
+            _detachIdentityButton.interactable = false;
+            _getExternalIdentitiesButton.interactable = false;
+            _walletExplorerButton.interactable = false;
         }
 
         public override void OnRefresh()
