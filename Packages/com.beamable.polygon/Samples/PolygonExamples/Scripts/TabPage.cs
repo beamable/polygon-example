@@ -11,12 +11,14 @@ namespace PolygonExamples.Scripts
 		[SerializeField] private string _page;
 
 		protected BeamContext Ctx;
+		protected Data Data;
 
 		public string Page => _page;
 
 		private void Awake()
 		{
 			Ctx = BeamContext.Default;
+			Data = Ctx.GetExampleData();
 		}
 		
 		public void SetVisible(bool value)

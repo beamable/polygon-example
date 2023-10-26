@@ -1,0 +1,20 @@
+{
+  "name": "Beamable.Polygon.ThirdParty",
+  "references": [
+    "Unity.Beamable",
+    "Unity.Beamable.Runtime.Common",
+    "Unity.Beamable.Server.Runtime",
+    "Unity.Beamable.Server.Runtime.Common",
+    "Unity.Beamable.Server.Runtime.Mocks",
+    "Unity.Beamable.Polygon.Common",
+    "Beamable.Polygon.Client",
+    "Unity.ResourceManager",
+    "Unity.Addressables",
+    "Beamable.Platform",
+    "Beamable.SmallerJSON",
+    "Unity.TextMeshPro",
+    "endel.nativewebsocket",
+    "RotaryHeart"
+  ],
+  "autoReferenced": true
+}

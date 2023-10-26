@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: bcc21c6c475a2f54cb2b092cfe7859ff
+guid: 81347544dac75554993e372fb8ad5b6d
 PluginImporter:
   externalObjects: {}
   serializedVersion: 2
@@ -16,53 +16,54 @@ PluginImporter:
     second:
       enabled: 0
       settings:
+        Exclude Android: 0
         Exclude Editor: 0
-        Exclude Linux64: 1
-        Exclude OSXUniversal: 1
-        Exclude WebGL: 1
-        Exclude Win: 1
-        Exclude Win64: 1
+        Exclude Linux64: 0
+        Exclude OSXUniversal: 0
+        Exclude WebGL: 0
+        Exclude Win: 0
+        Exclude Win64: 0
+        Exclude iOS: 0
+  - first:
+      Android: Android
+    second:
+      enabled: 1
+      settings: {}
   - first:
       Any: 
     second:
-      enabled: 0
+      enabled: 1
       settings: {}
   - first:
       Editor: Editor
     second:
       enabled: 1
       settings:
-        CPU: AnyCPU
         DefaultValueInitialized: true
-        OS: AnyOS
   - first:
       Standalone: Linux64
     second:
-      enabled: 0
-      settings:
-        CPU: None
+      enabled: 1
+      settings: {}
   - first:
       Standalone: OSXUniversal
     second:
-      enabled: 0
-      settings:
-        CPU: None
+      enabled: 1
+      settings: {}
   - first:
       Standalone: Win
     second:
-      enabled: 0
-      settings:
-        CPU: None
+      enabled: 1
+      settings: {}
   - first:
       Standalone: Win64
     second:
-      enabled: 0
-      settings:
-        CPU: None
+      enabled: 1
+      settings: {}
   - first:
       WebGL: WebGL
     second:
-      enabled: 0
+      enabled: 1
       settings: {}
   - first:
       Windows Store Apps: WindowsStoreApps
@@ -70,6 +71,11 @@ PluginImporter:
       enabled: 0
       settings:
         CPU: AnyCPU
+  - first:
+      iPhone: iOS
+    second:
+      enabled: 1
+      settings: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 

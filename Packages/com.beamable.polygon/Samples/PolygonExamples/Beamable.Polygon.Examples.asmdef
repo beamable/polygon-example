@@ -7,11 +7,13 @@
     "Unity.Beamable.Server.Runtime.Mocks",
     "Unity.Beamable.Polygon.Common",
     "Beamable.Polygon.Client",
+    "Beamable.Polygon.ThirdParty",
     "Unity.ResourceManager",
     "Unity.Addressables",
     "Beamable.Platform",
     "Beamable.SmallerJSON",
-    "Unity.TextMeshPro"
+    "Unity.TextMeshPro",
+    "endel.nativewebsocket"
   ],
   "name": "Beamable.Polygon.Examples",
   "autoReferenced": true
