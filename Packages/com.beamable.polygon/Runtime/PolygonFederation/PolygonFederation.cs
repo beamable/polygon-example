@@ -72,44 +72,6 @@ namespace Beamable.Microservices.PolygonFederation
             return realmAccount.Address;
         }
 
-        public async Promise<FederatedInventoryProxyState> StartInventoryTransaction(string id, string transaction, Dictionary<string, long> currencies, List<ItemCreateRequest> newItems)
-        {
-            await InitializeDefaultContract();
-
-            await TransactionManager.SaveTransaction(transaction);
-
-            try
-            {
-                if (currencies.Any() || newItems.Any())
-                {
-                    var currencyMints = currencies.Select(c => new MintRequest
-                    {
-                        ContentId = c.Key,
-                        Amount = (uint)c.Value,
-                        Properties = new Dictionary<string, string>(),
-                        IsUnique = false
-                    });
-
-                    var itemMints = newItems.Select(i => new MintRequest
-                    {
-                        ContentId = i.contentId,
-                        Amount = 1,
-                        Properties = i.properties,
-                        IsUnique = true
-                    });
-
-                    await MintingService.Mint(id, currencyMints.Union(itemMints).ToList());
-                }
-                return await GetInventoryState(id);
-            }
-            catch (Exception ex)
-            {
-                BeamableLogger.LogError("Error processing transaction {transaction} -> {error}. Clearing the transaction record to enable retries.", transaction, ex.Message);
-                await TransactionManager.ClearTransaction(transaction);
-                throw;
-            }
-        }
-
         public async Promise<FederatedInventoryProxyState> GetInventoryState(string id)
         {
             await InitializeDefaultContract();
@@ -154,6 +116,45 @@ namespace Beamable.Microservices.PolygonFederation
                 currencies = currencies,
                 items = itemGroups
             };
+        }
+
+        public async Promise<FederatedInventoryProxyState> StartInventoryTransaction(string id, string transaction, Dictionary<string, long> currencies, List<FederatedItemCreateRequest> newItems, List<FederatedItemDeleteRequest> deleteItems,
+            List<FederatedItemUpdateRequest> updateItems)
+        {
+            await InitializeDefaultContract();
+
+            await TransactionManager.SaveTransaction(transaction);
+
+            try
+            {
+                if (currencies.Any() || newItems.Any())
+                {
+                    var currencyMints = currencies.Select(c => new MintRequest
+                    {
+                        ContentId = c.Key,
+                        Amount = (uint)c.Value,
+                        Properties = new Dictionary<string, string>(),
+                        IsUnique = false
+                    });
+
+                    var itemMints = newItems.Select(i => new MintRequest
+                    {
+                        ContentId = i.contentId,
+                        Amount = 1,
+                        Properties = i.properties,
+                        IsUnique = true
+                    });
+
+                    await MintingService.Mint(id, currencyMints.Union(itemMints).ToList());
+                }
+                return await GetInventoryState(id);
+            }
+            catch (Exception ex)
+            {
+                BeamableLogger.LogError("Error processing transaction {transaction} -> {error}. Clearing the transaction record to enable retries.", transaction, ex.Message);
+                await TransactionManager.ClearTransaction(transaction);
+                throw;
+            }
         }
 
         [InitializeServices]
